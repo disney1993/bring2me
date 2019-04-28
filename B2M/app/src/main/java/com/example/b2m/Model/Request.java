@@ -7,6 +7,7 @@ public class Request {
     private String name;
     private String address;
     private String total;
+    private String status;
     private List<Order> foods;//listado de los productos
 
     public Request() {
@@ -18,6 +19,15 @@ public class Request {
         this.address = address;
         this.total = total;
         this.foods = foods;
+        this.status = "0";//por defecto esta el estado en 0.... 0=pedido realizado 1=en camino 2=enntregado
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getPhone() {

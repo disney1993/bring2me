@@ -50,7 +50,7 @@
             </LinearLayout>
             <Button
                 android:id="@+id/btnRealizarPedido"
-                android:text="RealizarPedido"
+                android:text="Realizar Pedido"
                 android:background="@color/btnSingActive"
                 android:textColor="@android:color/white"
                 android:layout_marginRight="8dp"
