@@ -45,6 +45,7 @@ public class SingIn extends AppCompatActivity {
                     //obtener informacion de usuario
                         mDialog.dismiss();
                         User user = dataSnapshot.child(etPhone.getText().toString()).getValue(User.class);
+                        user.setPhone(etPhone.getText().toString());//setPhone
                         if (user.getPassword().equals(etPassword.getText().toString())){
                             {
                                 Intent homeIntent = new Intent(SingIn.this,Home.class);
