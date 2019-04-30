@@ -12,6 +12,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+
 public class OrderStatus extends AppCompatActivity {
 
     public RecyclerView recyclerView;
@@ -31,9 +32,9 @@ public class OrderStatus extends AppCompatActivity {
         requests = database.getReference("Requests");
 
 
-        recyclerView =(RecyclerView)findViewById(R.id.listOrders);
+        recyclerView = (RecyclerView) findViewById(R.id.listOrders);
         recyclerView.setHasFixedSize(true);
-        layoutManager=new LinearLayoutManager(this);
+        layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
         loadOrders(Common.currentUser.getPhone());
@@ -45,7 +46,7 @@ public class OrderStatus extends AppCompatActivity {
                 R.layout.order_layout,
                 OrderViewHolder.class,
                 requests.orderByChild("phone")
-                    .equalTo(phone)
+                        .equalTo(phone)
         ) {
             @Override
             protected void populateViewHolder(OrderViewHolder viewHolder, Request model, int position) {
@@ -59,13 +60,12 @@ public class OrderStatus extends AppCompatActivity {
     }
 
     private String covertCodeToStatus(String status) {
-        if (status.equals("0"))
-            return "Pedido Realizado";
-        else if (status.equals("1"))
-            return "En camino";
-        else
-            return "Entregado";
-
-
+        if (status.equals( "0" )) {
+            return "Pedido realizado";
+        } else if (status.equals( "1" )) {
+            return "En proceso";
+        } else {
+            return "Enviado";
+        }
     }
 }
