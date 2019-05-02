@@ -30,7 +30,7 @@ public class SingIn extends AppCompatActivity {
         btnSingIn = (Button) findViewById(R.id.btnSingIn);
         //Inicializar firebase
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference table_user = database.getReference("User");
+        final DatabaseReference table_user = database.getReference("Users");
         btnSingIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

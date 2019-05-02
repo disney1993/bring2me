@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">B2M Manager</string>
+    <string name="slogan">Tus productos, más cerca de ti</string>
+
+
+    <!-- strings login -->
+    <string name="hintTelefono">Número de teléfono</string>
+    <string name="hintContrasenia">Contraseña</string>
+    <string name="hintNombre">Nombre</string>
+    <string name="celularDisney">0960137609</string>
+    <string name="contraseniaDisney">123</string>
+    <string name="nombreDisney">Disney</string>
+    <string name="title_activity_home">Home</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">CATEGORIAS</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="nombre_producto">nombre Producto</string>
+    <string name="imagendelproducto">imagendelproducto</string>
+    <string name="_1_000">1,000</string>
+    <string name="descripcion_del_producto">descripcion del producto</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+
+
+</resources>

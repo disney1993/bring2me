@@ -33,7 +33,7 @@ public class SingUp extends AppCompatActivity {
 
         //Inicializar firebase
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference table_user = database.getReference("User");
+        final DatabaseReference table_user = database.getReference("Users");
 
         btnSingUp.setOnClickListener(new View.OnClickListener() {
             @Override
