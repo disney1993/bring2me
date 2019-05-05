@@ -15,7 +15,7 @@
             android:id="@+id/etName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nombre"
+            android:hint="nombre"
             android:inputType="text"
             android:text=""
             android:textColor="@color/colorPrimary"
@@ -26,7 +26,7 @@
             android:id="@+id/etDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Descripción"
+            android:hint="@string/descripci_n"
             android:inputType="textMultiLine"
             android:text=""
             android:textColor="@color/colorPrimary"
@@ -37,7 +37,7 @@
             android:id="@+id/etPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Precio"
+            android:hint="@string/precio"
             android:inputType="numberDecimal"
             android:text=""
             android:textColor="@color/colorPrimary"
@@ -48,7 +48,7 @@
             android:id="@+id/etDiscount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Descuento"
+            android:hint="@string/descuento"
             android:inputType="numberDecimal"
             android:text=""
             android:textColor="@color/colorPrimary"
@@ -59,9 +59,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            style="?android:attr/buttonBarStyle"
             android:weightSum="2">
 
             <Button
+                style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/btnSelect"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -70,10 +72,11 @@
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimary"
-                android:text="Selecionar"
+                android:text="@string/selecionar"
                 android:textColor="@android:color/white" />
 
             <Button
+                style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/btnUpload"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -82,7 +85,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryDark"
-                android:text="Guardar"
+                android:text="@string/guardar"
                 android:textColor="@android:color/white" />
 
         </LinearLayout>

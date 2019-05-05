@@ -15,7 +15,7 @@
             android:id="@+id/etName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nombre"
+            android:hint="nombre"
             android:inputType="text"
             android:text=""
             android:textColor="@color/colorPrimary"
@@ -23,12 +23,14 @@
             android:textSize="34sp" />
 
         <LinearLayout
+            style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="2">
 
             <Button
+                style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/btnSelect"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -37,10 +39,11 @@
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimary"
-                android:text="Selecionar"
+                android:text="@string/selecionar"
                 android:textColor="@android:color/white" />
 
             <Button
+                style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/btnUpload"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -49,7 +52,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryDark"
-                android:text="Guardar"
+                android:text="@string/guardar"
                 android:textColor="@android:color/white" />
 
         </LinearLayout>

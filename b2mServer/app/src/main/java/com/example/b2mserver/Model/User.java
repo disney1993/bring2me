@@ -1,7 +1,7 @@
 package com.example.b2mserver.Model;
 
 public class User {
-    private String Name,Password,Phone,IsStaff;
+    private String Name, Password, Phone, IsStaff;
 
     public User(String name, String password) {
         Name = name;

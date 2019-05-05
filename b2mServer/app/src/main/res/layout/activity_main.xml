@@ -16,26 +16,29 @@
         <ImageView
             android:layout_width="300dp"
             android:layout_height="191dp"
-            android:src="@drawable/b2mlogo" />
+            android:src="@drawable/b2mlogo"
+            android:contentDescription="...." />
 
         <TextView
             android:id="@+id/txtSlogan"
             android:layout_width="match_parent"
             android:layout_height="29dp"
             android:gravity="center"
-            android:text="Aplicación para Staff"
+            android:text="@string/aplicaci_n_para_staff"
             android:textAlignment="center"
             android:textColor="@android:color/white" />
     </LinearLayout>
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:weightSum="2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/btnSingUp"
-            android:text="Registrarse"
+            android:text="@string/registrarse"
             android:background="@color/btnSingUp"
             android:textColor="@android:color/white"
             android:layout_weight="1"
@@ -44,8 +47,9 @@
             android:layout_margin="8dp"
             />
         <Button
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/btnSingIn"
-            android:text="Ingresar"
+            android:text="@string/ingresar"
             android:background="@color/btnSingActive"
             android:textColor="@android:color/white"
             android:layout_weight="1"

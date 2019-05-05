@@ -73,7 +73,7 @@ public class SingIn extends AppCompatActivity {
                             finish();
                         }
                         else{
-                            Toast.makeText(SingIn.this, "Password incorrecto!!!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SingIn.this, "Contraseña incorrecta!!!", Toast.LENGTH_SHORT).show();
                         }
                     }else {
                         Toast.makeText(SingIn.this, "Por favor, ingrese una cuenta de empleado", Toast.LENGTH_SHORT).show();

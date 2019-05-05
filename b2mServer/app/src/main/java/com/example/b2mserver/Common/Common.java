@@ -4,9 +4,18 @@ import com.example.b2mserver.Model.User;
 
 public class Common {
     public static User currentUser;
-    public static final String UPDATE = "Update";
-    public static final String DELETE = "Delete";
+    public static final String UPDATE = "Actualizar";
+    public static final String DELETE = "Eliminar";
 
     public static final int PICK_IMAGE_REQUEST = 71;
 
+    public static String covertirCodigoAStatus(String code){
+        if (code.equals("0"))
+            return "Realizado";
+        else if (code.equals("0"))
+            return "En camino";
+        else
+            return "Entregado";
+
+    }
 }

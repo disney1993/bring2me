@@ -14,10 +14,11 @@
             android:scaleType="centerCrop"
             android:src="@drawable/my_bg"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:contentDescription="....." />
         <TextView
             android:id="@+id/menu_name"
-            android:text="Nombre de la categoría"
+            android:text="@string/nombre_de_la_categor_a"
             android:textColor="@android:color/white"
             android:background="#4f0e0d0e"
             android:textSize="20sp"

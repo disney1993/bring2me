@@ -42,7 +42,7 @@
 
     <Button
         android:id="@+id/btnSingIn"
-        android:text="Ingresar"
+        android:text="@string/ingresar"
         android:background="@color/btnSingActive"
         android:textColor="@android:color/white"
         android:layout_marginRight="8dp"

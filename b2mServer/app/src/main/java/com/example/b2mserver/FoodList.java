@@ -23,7 +23,6 @@ import android.widget.Toast;
 
 import com.example.b2mserver.Common.Common;
 import com.example.b2mserver.Interface.ItemClickListener;
-import com.example.b2mserver.Model.Category;
 import com.example.b2mserver.Model.Food;
 import com.example.b2mserver.ViewHolder.FoodViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -180,7 +179,8 @@ public class FoodList extends AppCompatActivity {
                         }
                     });
                 }
-            })
+            }
+            )
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
@@ -195,6 +195,7 @@ public class FoodList extends AppCompatActivity {
                             mDialog.setMessage("Subido " + progress + "%");
                         }
                     });
+
         }
     }
 
@@ -233,7 +234,7 @@ public class FoodList extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Common.PICK_IMAGE_REQUEST && requestCode == RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == Common.PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             saveUri = data.getData();
             btnSelect.setText("Imagen Seleccionada!");
         }

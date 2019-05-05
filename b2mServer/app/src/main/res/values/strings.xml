@@ -28,6 +28,17 @@
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
+    <string name="aplicaci_n_para_staff">Aplicación para Staff</string>
+    <string name="registrarse">Registrarse</string>
+    <string name="ingresar">Ingresar</string>
+    <string name="descripci_n">Descripción</string>
+    <string name="precio">Precio</string>
+    <string name="descuento">Descuento</string>
+    <string name="selecionar">Selecionar</string>
+    <string name="guardar">Guardar</string>
+    <string name="nombre_de_la_categor_a">Nombre de la categoría</string>
+    <string name="nombre_del_producto">Nombre del producto</string>
+    <string name="title_activity_tracking_order">Seguimiento de Pedido</string>
 
 
 </resources>

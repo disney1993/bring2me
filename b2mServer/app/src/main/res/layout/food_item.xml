@@ -14,7 +14,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/my_bg" />
+            android:src="@drawable/my_bg"
+            android:contentDescription="...." />
 
         <TextView
             android:id="@+id/food_name"
@@ -23,7 +24,7 @@
             android:layout_alignParentBottom="true"
             android:background="#4f0e0d0e"
             android:gravity="center"
-            android:text="Nombre del producto"
+            android:text="@string/nombre_del_producto"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
     </RelativeLayout>

@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.b2m.Common.Common;
 import com.example.b2m.Model.Food;
+import com.example.b2m.Service.ListenOrder;
 import com.example.b2m.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
@@ -86,7 +87,9 @@ public class Home extends AppCompatActivity
         recycler_menu.setLayoutManager(layoutManager);
 
         loadMenu();
-
+        //service de la notificacion
+        Intent service = new Intent(Home.this, ListenOrder.class);
+        startService(service);
     }
 
     private void loadMenu() {
@@ -104,7 +107,7 @@ public class Home extends AppCompatActivity
                         //como el id de categoria es la clave primaria solo obtenemos la clave de este elemento
                         foodList.putExtra("CategoryId",adapter.getRef(position).getKey());
                         startActivity(foodList);
-//                        Toast.makeText(Home.this, ""+clickItem.getName(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Home.this, ""+clickItem.getName(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
