@@ -7,12 +7,11 @@ public class Common {
 
 
     public static String covertCodeToStatus(String status) {
-        if (status.equals( "0" )) {
-            return "Pedido realizado";
-        } else if (status.equals( "1" )) {
-            return "En proceso";
-        } else {
-            return "Enviado";
-        }
+        if (status.equals("0"))
+            return "Realizado";
+        else if (status.equals("1"))
+            return "En camino";
+        else
+            return "Entregado";
     }
 }

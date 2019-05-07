@@ -44,7 +44,8 @@ public class Database extends SQLiteAssetHelper {
         String query = String.format("INSERT INTO OrderDetail(ProductId,ProductName,quantity,Price,Discount) VALUES('%s','%s','%s','%s','%s');",
                 order.getProductId(),
                 order.getProductName(),
-                order.getQuantity(),order.getPrice(),
+                order.getQuantity(),
+                order.getPrice(),
                 order.getDiscount());
         db.execSQL(query);
     }

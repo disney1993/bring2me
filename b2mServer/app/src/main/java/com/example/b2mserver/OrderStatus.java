@@ -1,9 +1,10 @@
 package com.example.b2mserver;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import com.example.b2mserver.ViewHolder.OrderViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 
 public class OrderStatus extends AppCompatActivity {
 
@@ -28,6 +30,7 @@ public class OrderStatus extends AppCompatActivity {
     DatabaseReference requests;
 
     MaterialSpinner spinner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +57,7 @@ public class OrderStatus extends AppCompatActivity {
                 requests
         ) {
             @Override
-            protected void populateViewHolder(OrderViewHolder viewHolder, Request model, int position) {
+            protected void populateViewHolder(OrderViewHolder viewHolder, final Request model, int position) {
                 viewHolder.txtOrderId.setText(adapter.getRef(position).getKey());
                 viewHolder.txtOrderStatus.setText(Common.covertirCodigoAStatus(model.getStatus()));
                 viewHolder.txtOrderAddress.setText(model.getAddress());
@@ -63,7 +66,9 @@ public class OrderStatus extends AppCompatActivity {
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
-
+                        Intent trackingOrder =new Intent(OrderStatus.this,TrackingOrder.class);
+                        Common.currentRequest = model;
+                        startActivity(trackingOrder);
                     }
                 });
             }
@@ -75,7 +80,7 @@ public class OrderStatus extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getTitle().equals(Common.UPDATE))
-            showUpdateDialog(adapter.getRef(item.getOrder()).getKey(),adapter.getItem(item.getOrder()));
+            showUpdateDialog(adapter.getRef(item.getOrder()).getKey(), adapter.getItem(item.getOrder()));
         else if (item.getTitle().equals(Common.DELETE))
             deleteOrder(adapter.getRef(item.getOrder()).getKey());
 
@@ -91,9 +96,9 @@ public class OrderStatus extends AppCompatActivity {
         alertDialog.setTitle("Actualizar Pedidos");
         alertDialog.setMessage("Por favor, seleccione un estado");
         LayoutInflater inflater = this.getLayoutInflater();
-        final View view = inflater.inflate(R.layout.update_order_layout,null);
+        final View view = inflater.inflate(R.layout.update_order_layout, null);
         spinner = (MaterialSpinner) view.findViewById(R.id.statusSpinner);
-        spinner.setItems("Realizado","En camino","Entregado");
+        spinner.setItems("Realizado", "En camino", "Entregado");
 
         alertDialog.setView(view);
 

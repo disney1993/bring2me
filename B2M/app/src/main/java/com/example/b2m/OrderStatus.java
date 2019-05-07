@@ -36,10 +36,13 @@ public class OrderStatus extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-
-        if (getIntent() == null)
+// con el iff no se cargan los pedidos en el lado del cliente
+   /*   if (getIntent() == null)
             loadOrders(Common.currentUser.getPhone());
-        else loadOrders(getIntent().getStringExtra("userPhone"));
+        else
+            loadOrders(getIntent().getStringExtra("userPhone"));*/
+        loadOrders(Common.currentUser.getPhone());
+
 
     }
 
