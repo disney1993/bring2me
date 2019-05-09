@@ -1,16 +1,17 @@
 package com.example.b2m;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
+import com.example.b2m.Common.Common;
 import com.example.b2m.Database.Database;
 import com.example.b2m.Model.Food;
 import com.example.b2m.Model.Order;
@@ -23,12 +24,12 @@ import com.squareup.picasso.Picasso;
 
 public class FoodDetail extends AppCompatActivity {
 
-    TextView food_name,food_price,food_description;
+    TextView food_name, food_price, food_description;
     ImageView food_image;
     CollapsingToolbarLayout collapsingToolbarLayout;
     FloatingActionButton btnCart;
     ElegantNumberButton numberButton;
-    String foodId="";
+    String foodId = "";
 
     FirebaseDatabase database;
     DatabaseReference food;
@@ -76,7 +77,13 @@ public class FoodDetail extends AppCompatActivity {
             foodId = getIntent().getStringExtra("FoodId");
         if (!foodId.isEmpty())
         {
-            getDetailFood(foodId);
+            if (Common.isConectedToInternet(getBaseContext()))
+                getDetailFood(foodId);
+            else
+            {
+                Toast.makeText(FoodDetail.this, "Por favor, revisa tu conexión!!!", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
     }
 

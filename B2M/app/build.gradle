@@ -40,6 +40,10 @@ dependencies {
     // FirebaseUI for Firebase Realtime Database
     implementation 'com.firebaseui:firebase-ui-database:1.2.0'
 
+    //libreria para recordar claves en el celular "recordarme"
+    implementation 'io.paperdb:paperdb:2.1'
+    //libreria para el checbox material desing de "recordarme en el login"
+    implementation 'com.github.rey5137:material:1.2.4'
 
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-database:16.1.0'

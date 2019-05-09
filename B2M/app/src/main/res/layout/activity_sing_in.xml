@@ -38,6 +38,18 @@
             android:textColorHint="@android:color/white"
             android:textSize="34sp" />
 
+        <com.rey.material.widget.CheckBox
+            android:id="@+id/ckbRemember"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Material.Drawable.CheckBox"
+            android:text="Recordarme"
+            android:gravity="center_vertical"
+            android:textColor="@android:color/white"
+            app:cbd_strokeColor="@android:color/white"
+            app:cbd_tickColor="@color/colorPrimaryDark"
+            />
+
     </LinearLayout>
 
     <Button
