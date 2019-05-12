@@ -1,11 +1,13 @@
 package com.example.b2mserver.Service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -59,7 +61,13 @@ public class ListenOrder extends Service implements ChildEventListener {
     private void showNotification(String key, Request request) {
         Intent intent = new Intent(getBaseContext(), OrderStatus.class);
         PendingIntent contentIntent  = PendingIntent.getActivity(getBaseContext(),0,intent,0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel channel=
+                    new NotificationChannel("foodStatus","foodStatus",NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager notificationManager=getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
 
+        }
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getBaseContext());
         builder.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)

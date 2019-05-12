@@ -1,11 +1,13 @@
 package com.example.b2m.Service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -56,27 +58,54 @@ public class ListenOrder extends Service implements ChildEventListener {
     public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
         //trigger aqui
         Request request = dataSnapshot.getValue(Request.class);
-        showNotification(dataSnapshot.getKey(),request);
+        showNotification(dataSnapshot.getKey(), request);
 
     }
 
-    private void showNotification(String key, Request request) {
-        Intent intent= new Intent(getBaseContext(), OrderStatus.class);
-        intent.putExtra("userPhone",request.getPhone());
-        PendingIntent contentIntent = PendingIntent.getActivity(getBaseContext(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getBaseContext());
+    /*  private void showNotification(String key, Request request) {
+          Intent intent= new Intent(getBaseContext(), OrderStatus.class);
+          intent.putExtra("userPhone",request.getPhone());
+          PendingIntent contentIntent = PendingIntent.getActivity(getBaseContext(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+          NotificationCompat.Builder builder = new NotificationCompat.Builder(getBaseContext());
 
+          builder.setAutoCancel(true)
+                  .setDefaults(Notification.DEFAULT_ALL)
+                  .setWhen(System.currentTimeMillis())
+                  .setTicker("Bring2Me")
+                  .setContentInfo("Su pedido ha sido actualizado")
+                  .setContentText("Pedido #"+key+"estado actualizado a "+ Common.covertCodeToStatus(request.getStatus()))
+                  .setContentIntent(contentIntent)
+                  .setContentInfo("Info")
+                  .setSmallIcon(R.mipmap.ic_launcher);
+          NotificationManager notificationManager = (NotificationManager)getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+          notificationManager.notify(1,builder.build());
+      }*/
+    private void showNotification(String key, Request request) {
+        Intent intent = new Intent(getBaseContext(), OrderStatus.class);
+        intent.putExtra("userPhone", request.getPhone()); //necesitamos poner el teléfono del usuario
+        PendingIntent contentIntent = PendingIntent
+                .getActivity(getBaseContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel =
+                    new NotificationChannel("foodStatus", "foodStatus", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getBaseContext(), "foodStatus");
         builder.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
                 .setTicker("Bring2Me")
-                .setContentInfo("Su pedido ha sido actualizado")
-                .setContentText("Pedido #"+key+"estado actualizado a "+ Common.covertCodeToStatus(request.getStatus()))
+                .setContentInfo("Tu pedido fue actualizado")
+                .setContentText("El pedido #" + key + " se actualizó a " + Common.covertCodeToStatus(request.getStatus()))
                 .setContentIntent(contentIntent)
                 .setContentInfo("Info")
                 .setSmallIcon(R.mipmap.ic_launcher);
-        NotificationManager notificationManager = (NotificationManager)getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1,builder.build());
+        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, builder.build());
     }
 
     @Override

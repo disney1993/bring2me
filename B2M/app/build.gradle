@@ -53,6 +53,7 @@ dependencies {
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
     //libreria para crear text drawable images
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+    testImplementation 'org.testng:testng:6.9.6'
 
 
 }
