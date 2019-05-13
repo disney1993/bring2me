@@ -27,7 +27,6 @@
             android:textColorHint="@android:color/white"
             android:textSize="34sp" />
 
-
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/etName"
             android:layout_width="match_parent"
@@ -40,7 +39,6 @@
             android:textColorHint="@android:color/white"
             android:textSize="34sp" />
 
-
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
@@ -52,6 +50,19 @@
             android:textColor="@android:color/white"
             android:textColorHint="@android:color/white"
             android:textSize="34sp" />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/etSecureCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Código de seguridad"
+            android:inputType="text"
+            android:maxLength="10"
+            android:text="@string/contraseniaDisney"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white"
+            android:textSize="34sp" />
+
 
     </LinearLayout>
 
@@ -67,6 +78,5 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         />
-
 
 </RelativeLayout>

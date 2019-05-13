@@ -22,5 +22,6 @@
     <string name="_1_000">1,000</string>
     <string name="descripcion_del_producto">descripcion del producto</string>
 
+    <string name="forgot_pwd"><u>Olvidé mi contraseña</u></string>
 
 </resources>

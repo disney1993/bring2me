@@ -1,13 +1,18 @@
 package com.example.b2m;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.b2m.Common.Common;
@@ -17,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.CheckBox;
 
 import io.paperdb.Paper;
@@ -25,30 +31,43 @@ public class SingIn extends AppCompatActivity {
     EditText etPassword, etPhone;
     Button btnSingIn;
     CheckBox ckbRemember;
+    TextView txtForgotPwd;
+
+    FirebaseDatabase database;
+    DatabaseReference table_user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sing_in);
         etPassword = (EditText) findViewById(R.id.etPassword);
         etPhone = (EditText) findViewById(R.id.etPhone);
         btnSingIn = (Button) findViewById(R.id.btnSingIn);
         ckbRemember = (com.rey.material.widget.CheckBox) findViewById(R.id.ckbRemember);
+        txtForgotPwd = (TextView) findViewById(R.id.txtForgotPwd);
 
         //inicializar ppaper
         Paper.init(this);
 
         //Inicializar firebase
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference table_user = database.getReference("Users");
+        database = FirebaseDatabase.getInstance();
+        table_user = database.getReference("Users");
+
+        txtForgotPwd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showForgotPwdDialog();
+            }
+        });
         btnSingIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Common.isConectedToInternet(getBaseContext())) {
                     //recordar ususario y contrasenia
-                    if (ckbRemember.isChecked())
-                    {
-                        Paper.book().write(Common.USER_KEY,etPhone.getText().toString());
-                        Paper.book().write(Common.PWD_KEY,etPassword.getText().toString());
+                    if (ckbRemember.isChecked()) {
+                        Paper.book().write(Common.USER_KEY, etPhone.getText().toString());
+                        Paper.book().write(Common.PWD_KEY, etPassword.getText().toString());
                     }
 
                     final ProgressDialog mDialog = new ProgressDialog(SingIn.this);
@@ -91,5 +110,50 @@ public class SingIn extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void showForgotPwdDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Contraseña olvidada");
+        builder.setMessage("Ingrese su código de seguridad");
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View forgot_view = inflater.inflate(R.layout.forgot_password_layout, null);
+
+        builder.setView(forgot_view);
+        builder.setIcon(R.drawable.ic_security_black_24dp);
+
+        final MaterialEditText etPhone = (MaterialEditText) forgot_view.findViewById(R.id.etPhone);
+        final MaterialEditText etSecureCode = (MaterialEditText) forgot_view.findViewById(R.id.etSecureCode);
+
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //revisar si el usuario esta disponible
+                table_user.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.child(etPhone.getText().toString())
+                                .getValue(User.class);
+                        if (user.getSecureCode().equals(etSecureCode.getText().toString()))
+                            Toast.makeText(SingIn.this, "Tu contraseña :" + user.getPassword(), Toast.LENGTH_LONG).show();
+                        else
+                            Toast.makeText(SingIn.this, "Código incorrecto!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.show();
     }
 }

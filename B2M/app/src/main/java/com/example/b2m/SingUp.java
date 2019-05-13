@@ -1,6 +1,7 @@
 package com.example.b2m;
 
 import android.app.ProgressDialog;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -18,17 +19,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class SingUp extends AppCompatActivity {
-    EditText etPhone, etName, etPassword;
+    EditText etPhone, etName, etPassword, etSecureCode;
     Button btnSingUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sing_up);
 
         etName = (EditText) findViewById(R.id.etName);
         etPhone = (EditText) findViewById(R.id.etPhone);
         etPassword = (EditText) findViewById(R.id.etPassword);
+        etSecureCode = (EditText) findViewById(R.id.etSecureCode);
 
         btnSingUp = (Button) findViewById(R.id.btnSingUp);
 
@@ -53,7 +56,9 @@ public class SingUp extends AppCompatActivity {
                                 Toast.makeText(SingUp.this, "Teléfono ya registrado!!!", Toast.LENGTH_SHORT).show();
                             } else {
                                 mDialog.dismiss();
-                                User user = new User(etName.getText().toString(), etPassword.getText().toString());
+                                User user = new User(etName.getText().toString(),
+                                        etPassword.getText().toString(),
+                                        etSecureCode.getText().toString());
                                 table_user.child(etPhone.getText().toString()).setValue(user);
                                 Toast.makeText(SingUp.this, "Registro exitoso!", Toast.LENGTH_SHORT).show();
                                 finish();

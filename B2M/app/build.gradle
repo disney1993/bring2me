@@ -42,6 +42,8 @@ dependencies {
 
     //libreria para recordar claves en el celular "recordarme"
     implementation 'io.paperdb:paperdb:2.1'
+    //librer'ia para la barra de estrellas
+    implementation 'com.stepstone.apprating:app-rating:2.0.0'
     //libreria para el checbox material desing de "recordarme en el login"
     implementation 'com.github.rey5137:material:1.2.4'
 
