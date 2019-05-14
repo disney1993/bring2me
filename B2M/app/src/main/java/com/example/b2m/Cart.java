@@ -7,11 +7,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +21,7 @@ import com.example.b2m.Model.Request;
 import com.example.b2m.ViewHolder.CartAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -77,14 +77,15 @@ public class Cart extends AppCompatActivity {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Cart.this);
         alertDialog.setTitle("El último paso!");
         alertDialog.setMessage("Ingresa tu dirección: ");
+//layout para poner el moentario y la direccion
+        LayoutInflater inflater = this.getLayoutInflater();
+        View order_address_comment = inflater.inflate(R.layout.order_address_comment, null);
 
-        final EditText edtAddress = new EditText(Cart.this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT
-        );
-        edtAddress.setLayoutParams(lp);
-        alertDialog.setView(edtAddress);//aádimos un editText al alertdialog par aingresar la direccion
+        final MaterialEditText etAddress = (MaterialEditText) order_address_comment.findViewById(R.id.etAddress);
+        final MaterialEditText etComment = (MaterialEditText) order_address_comment.findViewById(R.id.etComment);
+
+        alertDialog.setView(order_address_comment);
+
         alertDialog.setIcon(R.drawable.ic_shopping_cart_black_24dp);
         alertDialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             @Override
@@ -93,8 +94,10 @@ public class Cart extends AppCompatActivity {
                 Request request = new Request(
                         Common.currentUser.getPhone(),
                         Common.currentUser.getName(),
-                        edtAddress.getText().toString(),
+                        etAddress.getText().toString(),
                         txtTotalPrice.getText().toString(),
+                        "0",//stats por defecto
+                        etComment.getText().toString(),
                         cart
                 );
                 //enviar a firebase el pedido
