@@ -1,8 +1,6 @@
 <resources>
     <string name="app_name">B2M</string>
     <string name="slogan">Tus productos, más cerca de ti</string>
-
-
     <!-- strings login -->
     <string name="hintTelefono">Número de teléfono</string>
     <string name="hintContrasenia">Contraseña</string>
@@ -21,7 +19,6 @@
     <string name="imagendelproducto">imagendelproducto</string>
     <string name="_1_000">1,000</string>
     <string name="descripcion_del_producto">descripcion del producto</string>
-
+    <!--<string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>-->
     <string name="forgot_pwd"><u>Olvidé mi contraseña</u></string>
-
 </resources>

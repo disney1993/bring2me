@@ -8,26 +8,19 @@ public class Request {
     private String address;
     private String total;
     private String status;
+    private String comment;
     private List<Order> foods;//listado de los productos
 
     public Request() {
     }
-
-    public Request(String phone, String name, String address, String total, List<Order> foods) {
+    public Request(String phone, String name, String address, String total, String status, String comment, List<Order> foods) {
         this.phone = phone;
         this.name = name;
         this.address = address;
         this.total = total;
-        this.foods = foods;
-        this.status = "0";//por defecto esta el estado en 0.... 0=pedido realizado 1=en camino 2=enntregado
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
         this.status = status;
+        this.comment = comment;
+        this.foods = foods;
     }
 
     public String getPhone() {
@@ -60,6 +53,22 @@ public class Request {
 
     public void setTotal(String total) {
         this.total = total;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public List<Order> getFoods() {

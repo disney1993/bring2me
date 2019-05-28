@@ -21,11 +21,13 @@ import android.widget.Toast;
 import com.example.b2m.Common.Common;
 import com.example.b2m.Interface.ItemClickListener;
 import com.example.b2m.Model.Category;
-import com.example.b2m.Service.ListenOrder;
+import com.example.b2m.Model.Token;
 import com.example.b2m.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.squareup.picasso.Picasso;
 
 import io.paperdb.Paper;
@@ -94,10 +96,15 @@ public class Home extends AppCompatActivity
             Toast.makeText(this, "Por favor, revisa tu conexión!!!", Toast.LENGTH_SHORT).show();
             return;
         }
+        updateToken(FirebaseInstanceId.getInstance().getToken());
 
-        //service de la notificacion
-        Intent service = new Intent(Home.this, ListenOrder.class);
-        startService(service);
+    }
+
+    private void updateToken(String token) {
+        FirebaseDatabase db= FirebaseDatabase.getInstance();
+        DatabaseReference tokens = db.getReference("Tokens");
+        Token data = new Token(token,false);
+        tokens.child(Common.currentUser.getPhone()).setValue(data);
     }
 
     private void loadMenu() {

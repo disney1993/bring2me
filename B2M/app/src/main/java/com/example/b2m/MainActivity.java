@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import io.paperdb.Paper;
 
 public class MainActivity extends AppCompatActivity {
+    //private static final String TAG = "MainActivity";
     Button btnSingUp, btnSingIn;
     TextView txtSlogan;
 
@@ -34,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
         btnSingUp = (Button) findViewById(R.id.btnSingUp);
         btnSingIn = (Button) findViewById(R.id.btnSingIn);
         txtSlogan = (TextView) findViewById(R.id.txtSlogan);
+
+//        Button logTokenButton = findViewById(R.id.logTokenButton);
+
 
         //letra nabila en el slogan
         Typeface face = Typeface.createFromAsset(getAssets(), "fonts/NABILA.TTF");
@@ -72,6 +76,34 @@ public class MainActivity extends AppCompatActivity {
             if (!user.isEmpty() && !pwd.isEmpty()) ;
             login(user, pwd);
         }
+
+      /*  logTokenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get token
+                // [START retrieve_current_token]
+                FirebaseInstanceId.getInstance().getInstanceId()
+                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                if (!task.isSuccessful()) {
+                                    Log.w(TAG, "getInstanceId failed", task.getException());
+                                    return;
+                                }
+
+                                // Get new Instance ID token
+                                String token = task.getResult().getToken();
+
+                                // Log and toast
+                                String msg = getString(R.string.msg_token_fmt, token);
+                                Log.d(TAG, msg);
+                                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                // [END retrieve_current_token]
+            }
+        });*/
+
     }
 
     private void login(final String phone, final String pwd) {
@@ -120,4 +152,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
     }
+
 }
+

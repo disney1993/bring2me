@@ -26,36 +26,40 @@
             android:gravity="center"
             android:text="@string/aplicaci_n_para_staff"
             android:textAlignment="center"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:visibility="visible" />
     </LinearLayout>
     <LinearLayout
-        style="?android:attr/buttonBarStyle"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:weightSum="2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <Button
-            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/btnSingUp"
-            android:text="@string/registrarse"
+            android:layout_width="0dp"
+
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
             android:background="@color/btnSingUp"
+            android:text="@string/registrarse"
             android:textColor="@android:color/white"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            />
-        <Button
-            style="?android:attr/buttonBarButtonStyle"
+            android:visibility="invisible" />
+        <info.hoang8f.widget.FButton
             android:id="@+id/btnSingIn"
-            android:text="@string/ingresar"
-            android:background="@color/btnSingActive"
-            android:textColor="@android:color/white"
-            android:layout_weight="1"
+            android:text="Ingresar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_margin="8dp"
+            android:textColor="#797979"
+            app:fButtonColor="#FFF"
+            app:shadowColor="#000"
+            app:shadowEnabled="true"
+            app:shadowHeight="5dp"
+            app:cornerRadius="4dp"
             />
     </LinearLayout>
 </RelativeLayout>

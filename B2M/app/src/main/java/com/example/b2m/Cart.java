@@ -3,10 +3,12 @@ package com.example.b2m;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,17 +18,31 @@ import android.widget.Toast;
 
 import com.example.b2m.Common.Common;
 import com.example.b2m.Database.Database;
+import com.example.b2m.Model.MyResponse;
+import com.example.b2m.Model.Notification;
 import com.example.b2m.Model.Order;
 import com.example.b2m.Model.Request;
+import com.example.b2m.Model.Sender;
+import com.example.b2m.Model.Token;
+import com.example.b2m.Remote.APIService;
 import com.example.b2m.ViewHolder.CartAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import info.hoang8f.widget.FButton;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Cart extends AppCompatActivity {
     RecyclerView recyclerView;
@@ -36,17 +52,23 @@ public class Cart extends AppCompatActivity {
     DatabaseReference requests;
 
     TextView txtTotalPrice;
-    Button btnRealizar;
+    FButton btnRealizar;
 
     List<Order> cart = new ArrayList<>();
 
     CartAdapter adapter;
+    APIService mService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
+
+        //inicializar service
+        mService = Common.getFCMService();
+
+
         //Firebase
         database = FirebaseDatabase.getInstance();
         requests = database.getReference("Requests");
@@ -57,7 +79,7 @@ public class Cart extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         txtTotalPrice = (TextView) findViewById(R.id.total);
-        btnRealizar = (Button) findViewById(R.id.btnRealizarPedido);
+        btnRealizar = (FButton) findViewById(R.id.btnRealizarPedido);
 
         btnRealizar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,10 +124,17 @@ public class Cart extends AppCompatActivity {
                 );
                 //enviar a firebase el pedido
                 //usaremos el System.CurrentTimemillis para teclear
-                requests.child(String.valueOf(System.currentTimeMillis()))
+
+                String order_number = String.valueOf(System.currentTimeMillis());
+
+                requests.child(order_number)
                         .setValue(request);
                 //eliminar carrito
                 new Database(getBaseContext()).cleanCart();
+
+
+                sendNotificationOrder(order_number);
+                //comentar las 2 lineas
                 Toast.makeText(Cart.this, "Gracias, Pedido realizado", Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -117,6 +146,50 @@ public class Cart extends AppCompatActivity {
             }
         });
         alertDialog.show();
+    }
+
+    private void sendNotificationOrder(final String order_number) {
+        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query data = tokens.orderByChild("serverToken").equalTo(true);
+        data.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapShot : dataSnapshot.getChildren()) {
+                    Token serverToken = postSnapShot.getValue(Token.class);
+
+                    Notification notification = new Notification("BRING2ME", "Nuevo pedido " + order_number);
+                    Sender content = new Sender(serverToken.getToken(), notification);
+                    mService.sendNotification(content)
+                            .enqueue(new Callback<MyResponse>() {
+                                @Override
+                                public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                                    if(response.code() == 200)
+                                    {
+                                        if (response.body().success == 1)
+                                        {
+                                            Toast.makeText(Cart.this, "Gracias, Pedido realizado", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        }
+                                        else
+                                        {
+                                            Toast.makeText(Cart.this, "Falló, Pedido no realizado!!!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<MyResponse> call, Throwable t) {
+                                    Log.e("ERROR", t.getMessage());
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void loadListFood() {

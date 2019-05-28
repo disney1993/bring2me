@@ -25,11 +25,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.CheckBox;
 
+import info.hoang8f.widget.FButton;
 import io.paperdb.Paper;
 
 public class SingIn extends AppCompatActivity {
     EditText etPassword, etPhone;
-    Button btnSingIn;
+    FButton btnSingIn;
     CheckBox ckbRemember;
     TextView txtForgotPwd;
 
@@ -43,7 +44,7 @@ public class SingIn extends AppCompatActivity {
         setContentView(R.layout.activity_sing_in);
         etPassword = (EditText) findViewById(R.id.etPassword);
         etPhone = (EditText) findViewById(R.id.etPhone);
-        btnSingIn = (Button) findViewById(R.id.btnSingIn);
+        btnSingIn = (FButton) findViewById(R.id.btnSingIn);
         ckbRemember = (com.rey.material.widget.CheckBox) findViewById(R.id.ckbRemember);
         txtForgotPwd = (TextView) findViewById(R.id.txtForgotPwd);
 

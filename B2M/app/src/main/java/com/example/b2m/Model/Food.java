@@ -1,7 +1,7 @@
 package com.example.b2m.Model;
 
 public class Food {
-    private String Name,Image,Description,Price,Discount,MenuId;
+    private String Name, Image, Description, Price, Discount, MenuId;
 
     public Food() {
     }

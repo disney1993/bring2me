@@ -18,9 +18,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import info.hoang8f.widget.FButton;
+
 public class SingUp extends AppCompatActivity {
     EditText etPhone, etName, etPassword, etSecureCode;
-    Button btnSingUp;
+    FButton btnSingUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +35,7 @@ public class SingUp extends AppCompatActivity {
         etPassword = (EditText) findViewById(R.id.etPassword);
         etSecureCode = (EditText) findViewById(R.id.etSecureCode);
 
-        btnSingUp = (Button) findViewById(R.id.btnSingUp);
+        btnSingUp = (FButton) findViewById(R.id.btnSingUp);
 
         //Inicializar firebase
         final FirebaseDatabase database = FirebaseDatabase.getInstance();

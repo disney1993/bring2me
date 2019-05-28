@@ -30,7 +30,7 @@ import android.widget.Toast;
 import com.example.b2mserver.Common.Common;
 import com.example.b2mserver.Interface.ItemClickListener;
 import com.example.b2mserver.Model.Category;
-import com.example.b2mserver.Service.ListenOrder;
+import com.example.b2mserver.Model.Token;
 import com.example.b2mserver.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -41,6 +41,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -48,6 +49,8 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.UUID;
+
+import info.hoang8f.widget.FButton;
 
 public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -67,7 +70,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
     //a;adir nuevo layout de menu
     EditText etName;
-    Button btnUpload, btnSelect;
+    FButton btnUpload, btnSelect;
     Category newCategory;
     Uri saveUri;
 
@@ -116,9 +119,16 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         recycler_menu.setLayoutManager(layoutManager);
 
         loadMenu();
-        //llamada al servicio de las notificaciones
-        Intent service = new Intent(Home.this, ListenOrder.class);
-        startService(service);
+
+        //enviar el token
+        updateToken(FirebaseInstanceId.getInstance().getToken());
+    }
+
+    private void updateToken(String token) {
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference tokens = db.getReference("Tokens");
+        Token data = new Token(token, true);
+        tokens.child(Common.currentUser.getPhone()).setValue(data);
     }
 
     private void showDialog() {
@@ -321,8 +331,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         foodInCategory.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot:dataSnapshot.getChildren())
-                {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     postSnapshot.getRef().removeValue();
                 }
             }
@@ -332,7 +341,6 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
             }
         });
-
 
 
         categories.child(key).removeValue();

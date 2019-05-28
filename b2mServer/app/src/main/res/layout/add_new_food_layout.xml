@@ -62,7 +62,7 @@
             style="?android:attr/buttonBarStyle"
             android:weightSum="2">
 
-            <Button
+            <info.hoang8f.widget.FButton
                 style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/btnSelect"
                 android:layout_width="0dp"
@@ -73,9 +73,14 @@
                 android:layout_weight="1"
                 android:background="@color/colorPrimary"
                 android:text="@string/selecionar"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                app:fButtonColor="@color/btnSingActive"
+                app:shadowColor="@android:color/black"
+                app:shadowEnabled="true"
+                app:shadowHeight="5dp"
+                app:cornerRadius="4dp"/>
 
-            <Button
+            <info.hoang8f.widget.FButton
                 style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/btnUpload"
                 android:layout_width="0dp"
@@ -84,9 +89,14 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
-                android:background="@color/colorPrimaryDark"
                 android:text="@string/guardar"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                app:fButtonColor="@color/colorPrimaryDark"
+                app:shadowColor="@android:color/black"
+                app:shadowEnabled="true"
+                app:shadowHeight="5dp"
+                app:cornerRadius="4dp"
+                />
 
         </LinearLayout>
 

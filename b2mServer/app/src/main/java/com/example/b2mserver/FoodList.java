@@ -38,6 +38,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.UUID;
 
+import info.hoang8f.widget.FButton;
+
 public class FoodList extends AppCompatActivity {
 
     RecyclerView recyclerView;
@@ -58,7 +60,7 @@ public class FoodList extends AppCompatActivity {
 
     //agregar nuevo producto
     EditText etName, etDescription, etPrice, etDiscount;
-    Button btnSelect, btnUpload;
+    FButton btnSelect, btnUpload;
 
     Food newFood;
 

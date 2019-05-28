@@ -18,9 +18,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import info.hoang8f.widget.FButton;
+
 public class SingIn extends AppCompatActivity {
     EditText etPassword, etPhone;
-    Button btnSingIn;
+    FButton btnSingIn;
     FirebaseDatabase db;
     DatabaseReference users;
 
@@ -33,7 +35,7 @@ public class SingIn extends AppCompatActivity {
 
         etPassword = (EditText) findViewById(R.id.etPassword);
         etPhone = (EditText) findViewById(R.id.etPhone);
-        btnSingIn = (Button) findViewById(R.id.btnSingIn);
+        btnSingIn = (FButton) findViewById(R.id.btnSingIn);
 
         //inicializar firebase
         db=FirebaseDatabase.getInstance();

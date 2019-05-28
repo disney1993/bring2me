@@ -40,10 +40,9 @@
 
     </LinearLayout>
 
-    <Button
+    <info.hoang8f.widget.FButton
         android:id="@+id/btnSingIn"
         android:text="@string/ingresar"
-        android:background="@color/btnSingActive"
         android:textColor="@android:color/white"
         android:layout_marginRight="8dp"
         android:layout_marginLeft="8dp"
@@ -51,6 +50,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        app:fButtonColor="@color/btnSingActive"
+        app:shadowColor="#000"
+        app:shadowEnabled="true"
+        app:shadowHeight="5dp"
+        app:cornerRadius="4dp"
         />
 
 

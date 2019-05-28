@@ -7,6 +7,8 @@ import android.graphics.Paint;
 
 import com.example.b2mserver.Model.Request;
 import com.example.b2mserver.Model.User;
+import com.example.b2mserver.Remote.APIService;
+import com.example.b2mserver.Remote.FCMRetrofitClient;
 import com.example.b2mserver.Remote.IGeoCoordinates;
 import com.example.b2mserver.Remote.RetrofitClient;
 
@@ -23,6 +25,8 @@ public class Common {
 
     public static final String baseUrl = "https://maps.googleapis.com";
 
+    public static final String fcmUrl = "https://fcm.googleapis.com/";
+
     public static String covertirCodigoAStatus(String code) {
         if (code.equals("0"))
             return "Realizado";
@@ -33,9 +37,12 @@ public class Common {
 
     }
 
+    public static APIService getFCMClient(){
+        return FCMRetrofitClient.getClient(fcmUrl).create(APIService.class);
+    }
+
     public static IGeoCoordinates getGeoCodeService(){
         return RetrofitClient.getClient(baseUrl).create(IGeoCoordinates.class);
-
     }
 
     public static Bitmap scaleBitmap(Bitmap bitmap,int newWidth,int newHeight)

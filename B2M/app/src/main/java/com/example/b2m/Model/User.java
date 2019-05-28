@@ -14,7 +14,7 @@ public class User {
         Name = name;
         Password = password;
         IsStaff = "false";
-        this.secureCode=secureCode;
+        this.secureCode = secureCode;
     }
 
     public String getIsStaff() {
