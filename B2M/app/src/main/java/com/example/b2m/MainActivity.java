@@ -3,10 +3,15 @@ package com.example.b2m;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -14,11 +19,15 @@ import android.widget.Toast;
 
 import com.example.b2m.Common.Common;
 import com.example.b2m.Model.User;
+import com.facebook.FacebookSdk;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import io.paperdb.Paper;
 
@@ -31,7 +40,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
         setContentView(R.layout.activity_main);
+
+        imprimirKeyHash();
+
         btnSingUp = (Button) findViewById(R.id.btnSingUp);
         btnSingIn = (Button) findViewById(R.id.btnSingIn);
         txtSlogan = (TextView) findViewById(R.id.txtSlogan);
@@ -104,6 +118,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
 
+    }
+
+    private void imprimirKeyHash() {
+        try{
+            PackageInfo info = getPackageManager().getPackageInfo("com.example.b2m",
+                    PackageManager.GET_SIGNATURES);
+            for(Signature signature:info.signatures){
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash", Base64.encodeToString(md.digest(),Base64.DEFAULT));
+            }
+        }catch (PackageManager.NameNotFoundException e){
+            e.printStackTrace();
+        }catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private void login(final String phone, final String pwd) {

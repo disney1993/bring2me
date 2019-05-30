@@ -21,4 +21,7 @@
     <string name="descripcion_del_producto">descripcion del producto</string>
     <!--<string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>-->
     <string name="forgot_pwd"><u>Olvidé mi contraseña</u></string>
+    <string name="facebook_app_id">386136041987682</string>
+    <string name="facebook_login_protocol_name">fb386136041987682</string>
+
 </resources>

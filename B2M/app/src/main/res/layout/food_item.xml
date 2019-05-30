@@ -28,12 +28,21 @@
             <TextView
                 android:id="@+id/food_name"
                 android:layout_width="0dp"
-                android:layout_weight="9"
+                android:layout_weight="8"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Nombre del producto"
                 android:textColor="@android:color/white"
                 android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/btnShare"
+                android:src="@drawable/ic_menu_share"
+                android:tint="@android:color/white"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
             <ImageView
                 android:id="@+id/fav"
                 android:src="@drawable/ic_favorite_border_black_24dp"

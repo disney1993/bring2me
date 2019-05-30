@@ -9,17 +9,21 @@ public class Request {
     private String total;
     private String status;
     private String comment;
+    //estado del pago
+    private String paymentState;
     private List<Order> foods;//listado de los productos
 
     public Request() {
     }
-    public Request(String phone, String name, String address, String total, String status, String comment, List<Order> foods) {
+
+    public Request(String phone, String name, String address, String total, String status, String comment, String paymentState, List<Order> foods) {
         this.phone = phone;
         this.name = name;
         this.address = address;
         this.total = total;
         this.status = status;
         this.comment = comment;
+        this.paymentState = paymentState;
         this.foods = foods;
     }
 
@@ -69,6 +73,14 @@ public class Request {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getPaymentState() {
+        return paymentState;
+    }
+
+    public void setPaymentState(String paymentState) {
+        this.paymentState = paymentState;
     }
 
     public List<Order> getFoods() {

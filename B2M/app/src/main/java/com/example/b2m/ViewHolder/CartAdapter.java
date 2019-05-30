@@ -78,7 +78,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
         TextDrawable drawable = TextDrawable.builder()
                 .buildRound("" + ListData.get(position).getQuantity(), Color.RED);
         holder.img_cart_count.setImageDrawable(drawable);
-        Locale locale = new Locale("es", "ES");
+        Locale locale = new Locale("es", "EC");
         NumberFormat fmt = NumberFormat.getCurrencyInstance(locale);
         float price = (Float.parseFloat(ListData.get(position).getPrice())) * (Float.parseFloat(ListData.get(position).getQuantity()));
         holder.txt_price.setText(fmt.format(price));
