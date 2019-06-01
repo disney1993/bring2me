@@ -47,6 +47,8 @@ dependencies {
     implementation 'com.facebook.android:facebook-share:5.0.1'
     //PAYPAL
     implementation 'com.paypal.sdk:paypal-android-sdk:2.15.3'
+    //spotsdialog para cambiar contrsenia
+    implementation 'com.github.d-max:spots-dialog:0.7@aar'
 
     testImplementation 'junit:junit:4.12'
 }

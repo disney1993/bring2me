@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,7 +73,7 @@ public class SingIn extends AppCompatActivity {
                     final ProgressDialog mDialog = new ProgressDialog(SingIn.this);
                     mDialog.setMessage("Espera por favor...");
                     mDialog.show();
-                    table_user.addValueEventListener(new ValueEventListener() {
+                    table_user.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             //revisar si no existe ya el usuario en la database
@@ -89,6 +88,8 @@ public class SingIn extends AppCompatActivity {
                                         Common.currentUser = user;
                                         startActivity(homeIntent);
                                         finish();
+
+                                        table_user.removeEventListener(this);
                                     }
                                     Toast.makeText(SingIn.this, "Ingreso exitoso", Toast.LENGTH_SHORT).show();
                                 } else {
