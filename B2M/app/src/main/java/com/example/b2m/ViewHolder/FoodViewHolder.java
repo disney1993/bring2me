@@ -5,14 +5,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.andremion.counterfab.CounterFab;
 import com.example.b2m.Interface.ItemClickListener;
 import com.example.b2m.R;
 
 public class FoodViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 
-    public TextView food_name;
-    public ImageView food_image, fav_image,share_image;
+    public TextView food_name,food_price;
+    public ImageView food_image, fav_image,share_image,quick_cart;
     private ItemClickListener itemClickListener;
 
     public void setItemClickListener(ItemClickListener itemClickListener) {
@@ -26,6 +27,8 @@ public class FoodViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         food_image = (ImageView) itemView.findViewById(R.id.food_image);
         fav_image = (ImageView) itemView.findViewById(R.id.fav);
         share_image = (ImageView) itemView.findViewById(R.id.btnShare);
+        food_price = (TextView) itemView.findViewById(R.id.food_price);
+        quick_cart = (ImageView) itemView.findViewById(R.id.btn_quick_cart);
 
         itemView.setOnClickListener(this);
     }

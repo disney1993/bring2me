@@ -1,5 +1,6 @@
 package com.example.b2m;
 
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andremion.counterfab.CounterFab;
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.example.b2m.Common.Common;
 import com.example.b2m.Database.Database;
@@ -29,12 +31,16 @@ import com.stepstone.apprating.listener.RatingDialogListener;
 
 import java.util.Arrays;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class FoodDetail extends AppCompatActivity implements RatingDialogListener {
 
     TextView food_name, food_price, food_description;
     ImageView food_image;
     CollapsingToolbarLayout collapsingToolbarLayout;
-    FloatingActionButton btnCart, btnRating;
+    FloatingActionButton btnRating;
+    CounterFab btnCart;
     ElegantNumberButton numberButton;
     RatingBar ratingBar;
 
@@ -45,11 +51,25 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
     DatabaseReference ratingTbl;
     Food currentFood;
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
+
+        //para el estilo de la fuente siempre agregar antes del setContentView
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("fonts/cf.otf")
+                .setFontAttrId(R.attr.fontPath)
+                .build());
+
+
         setContentView(R.layout.activity_food_detail);
 
         //Firebase
@@ -59,7 +79,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
 
         //Inicializar vista
         numberButton = (ElegantNumberButton) findViewById(R.id.number_button);
-        btnCart = (FloatingActionButton) findViewById(R.id.btnCart);
+        btnCart = (CounterFab) findViewById(R.id.btnCart);
         btnRating = (FloatingActionButton) findViewById(R.id.btn_rating);
         ratingBar = (RatingBar) findViewById(R.id.ratingBar);
 
@@ -84,6 +104,8 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
                 Toast.makeText(FoodDetail.this, "Agregado al carrito", Toast.LENGTH_SHORT).show();
             }
         });
+
+        btnCart.setCount(new Database(this).getCountCart());
 
         food_description = (TextView) findViewById(R.id.food_description);
         food_name = (TextView) findViewById(R.id.food_name);
@@ -161,7 +183,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
                 currentFood = dataSnapshot.getValue(Food.class);
 
                 //colocar la imagen del producto
-                Picasso.with(getBaseContext()).load(currentFood.getImage())
+                Picasso.get().load(currentFood.getImage())
                         .into(food_image);
 
                 collapsingToolbarLayout.setTitle(currentFood.getName());

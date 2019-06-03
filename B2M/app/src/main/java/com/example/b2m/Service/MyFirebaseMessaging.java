@@ -8,8 +8,12 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
+import com.example.b2m.Common.Common;
 import com.example.b2m.MainActivity;
+import com.example.b2m.Model.Token;
 import com.example.b2m.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -18,6 +22,28 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         sendNotification(remoteMessage);
+        /*
+        if (remoteMessage.getData()!=null)
+        {
+            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
+                sendNotificationAPI26(remoteMessage);
+            else
+                sendNotification(remoteMessage);
+        }*/
+    }
+
+    @Override
+    public void onNewToken(String tokenRefreshed) {
+        super.onNewToken(tokenRefreshed);
+        if (Common.currentUser != null)
+            updateTokenToFirebase(tokenRefreshed);
+    }
+
+    private void updateTokenToFirebase(String tokenRefreshed) {
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference tokens = db.getReference("Tokens");
+        Token token = new Token(tokenRefreshed, false);
+        tokens.child(Common.currentUser.getPhone()).setValue(token);
     }
 
     private void sendNotification(RemoteMessage remoteMessage) {
@@ -35,7 +61,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
 
-        NotificationManager noti = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         noti.notify(0, builder.build());
     }
 }

@@ -20,10 +20,10 @@
             android:iconTint="@android:color/white"
             android:title="Pedidos" />
         <item
-            android:id="@+id/nav_change_pwd"
+            android:id="@+id/nav_update_name"
             android:icon="@drawable/ic_security_black_24dp"
             android:iconTint="@android:color/white"
-            android:title="Cambiar contraseña"
+            android:title="Modificar nombre"
             />
         <item
             android:id="@+id/nav_log_out"

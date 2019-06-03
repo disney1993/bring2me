@@ -2,43 +2,48 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
-    app:cardElevation="4dp">
+    app:cardElevation="10dp"
+    app:cardCornerRadius="0dp">
 
-    <RelativeLayout
+    <LinearLayout
+        android:layout_margin="10dp"
+        android:orientation="vertical"
+        android:weightSum="5"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/food_image"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
             android:scaleType="centerCrop"
             android:src="@drawable/my_bg" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:weightSum="10"
             android:orientation="horizontal"
-            android:layout_alignParentBottom="true"
-            android:background="#4f0e0d0e"
-            android:weightSum="10">
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            >
 
             <TextView
                 android:id="@+id/food_name"
-                android:layout_width="0dp"
-                android:layout_weight="8"
-                android:layout_height="wrap_content"
-                android:gravity="center"
                 android:text="Nombre del producto"
-                android:textColor="@android:color/white"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:layout_weight="8"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                />
 
             <ImageView
                 android:id="@+id/btnShare"
                 android:src="@drawable/ic_menu_share"
-                android:tint="@android:color/white"
+                android:tint="@color/colorAccent"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
@@ -47,10 +52,33 @@
                 android:id="@+id/fav"
                 android:src="@drawable/ic_favorite_border_black_24dp"
                 android:layout_width="0dp"
-                android:tint="@android:color/white"
+                android:tint="@color/colorAccent"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </LinearLayout>
-    </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/food_price"
+                android:text="$1000"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+            <ImageView
+                android:id="@+id/btn_quick_cart"
+                android:src="@drawable/ic_shopping_cart_black_24dp"
+                android:tint="@color/colorAccent"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </android.support.v7.widget.CardView>
