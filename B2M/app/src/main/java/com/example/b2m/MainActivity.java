@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
     }
 */
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable final Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode,Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE) {
             AccountKitLoginResult result = data.getParcelableExtra(AccountKitLoginResult.RESULT_KEY);
@@ -277,13 +277,13 @@ public class MainActivity extends AppCompatActivity {
                             users.orderByKey().equalTo(userPhone)
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
                                             if (!dataSnapshot.child(userPhone).exists())//si no existe
                                             {
                                                 //creamos el nuevo usuario y lo logueamos
                                                 User newUser = new User();
                                                 newUser.setPhone(userPhone);
-                                                newUser.setName("");
+                                                newUser.setName("Usuario");
                                                 //agregar a firebase
                                                 users.child(userPhone)
                                                         .setValue(newUser)
@@ -324,6 +324,8 @@ public class MainActivity extends AppCompatActivity {
                                                                 //mismo codigo q el login normal
                                                                 Intent homeIntent = new Intent(MainActivity.this, Home.class);
                                                                 Common.currentUser = localUser;
+//                                                                homeIntent.putExtra("userPhone",Common.currentUser.getPhone());
+
                                                                 startActivity(homeIntent);
                                                                 waitingDialog.dismiss();
                                                                 finish();

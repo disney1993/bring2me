@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,7 +14,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -60,8 +58,6 @@ public class Home extends AppCompatActivity
     DatabaseReference category;
     TextView txtFullname;
     RecyclerView recycler_menu;
-    RecyclerView.LayoutManager layoutManager;
-
     FirebaseRecyclerAdapter<Category, MenuViewHolder> adapter;
 
     SwipeRefreshLayout swipeRefreshLayout;
@@ -74,7 +70,7 @@ public class Home extends AppCompatActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)  {
+    protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
 
@@ -129,7 +125,6 @@ public class Home extends AppCompatActivity
                 .build();
 
         adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(options) {
-
             @NonNull
             @Override
             public MenuViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -151,6 +146,7 @@ public class Home extends AppCompatActivity
                         Intent foodList = new Intent(Home.this, FoodList.class);
                         //como el id de categoria es la clave primaria solo obtenemos la clave de este elemento
                         foodList.putExtra("CategoryId", adapter.getRef(position).getKey());
+
                         startActivity(foodList);
                         Toast.makeText(Home.this, "" + clickItem.getName(), Toast.LENGTH_SHORT).show();
                     }
@@ -183,28 +179,34 @@ public class Home extends AppCompatActivity
         //Cargar nombre de usuario
         View headerView = navigationView.getHeaderView(0);
         txtFullname = (TextView) headerView.findViewById(R.id.txtFullName);
-        txtFullname.setText(Common.currentUser.getName());
+        //txtFullname.setText(Common.currentUser.getName());
+        //txtFullname.setText(Common.currentUser.getName());
         //Cargar menu
         recycler_menu = (RecyclerView) findViewById(R.id.recycler_menu);
         //recycler_menu.setHasFixedSize(true);
         //layoutManager = new LinearLayoutManager(this);
         //recycler_menu.setLayoutManager(layoutManager);
-        recycler_menu.setLayoutManager(new GridLayoutManager(this,2));
+        recycler_menu.setLayoutManager(new GridLayoutManager(this, 2));
 
         //animacion
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(recycler_menu.getContext(),
                 R.anim.layout_fall_down);
         recycler_menu.setLayoutAnimation(controller);
-
         updateToken(FirebaseInstanceId.getInstance().getToken());
-
+        /*updateToken(FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                String newToken = instanceIdResult.getToken();
+                Log.e("newToken",newToken);
+            }
+        }));*/
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         fab.setCount(new Database(this).getCountCart());
-        if (adapter!=null)
+        if (adapter != null)
             adapter.startListening();
     }
 

@@ -26,6 +26,7 @@ public class Common {
     public static final String baseUrl = "https://maps.googleapis.com";
 
     public static final String fcmUrl = "https://fcm.googleapis.com/";
+    public static String PHONE_TEXT = "userPhone";
 
     public static String covertirCodigoAStatus(String code) {
         if (code.equals("0"))

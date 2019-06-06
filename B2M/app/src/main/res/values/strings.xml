@@ -24,4 +24,7 @@
     <string name="facebook_app_id">386136041987682</string>
     <string name="facebook_login_protocol_name">fb386136041987682</string>
     <string name="ACCOUNT_KIT_CLIENT_TOKEN">2adbfec422d78bb9a85a6bb482338602</string>
+    <string name="google_place_api">AIzaSyCFRY-knPZg-icqg_0-664RnFGq08QkKFk</string>
+
+
 </resources>

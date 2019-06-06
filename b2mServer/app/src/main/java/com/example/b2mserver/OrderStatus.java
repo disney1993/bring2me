@@ -3,6 +3,7 @@ package com.example.b2mserver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.b2mserver.Common.Common;
@@ -21,6 +23,7 @@ import com.example.b2mserver.Model.Token;
 import com.example.b2mserver.Remote.APIService;
 import com.example.b2mserver.ViewHolder.OrderViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -67,14 +70,14 @@ public class OrderStatus extends AppCompatActivity {
     }
 
     private void loadOrders() {
-        adapter = new FirebaseRecyclerAdapter<Request, OrderViewHolder>(
-                Request.class,
-                R.layout.order_layout,
-                OrderViewHolder.class,
-                requests
-        ) {
+
+        FirebaseRecyclerOptions<Request> options = new FirebaseRecyclerOptions.Builder<Request>()
+                .setQuery(requests, Request.class)
+                .build();
+
+        adapter = new FirebaseRecyclerAdapter<Request, OrderViewHolder>(options) {
             @Override
-            protected void populateViewHolder(OrderViewHolder viewHolder, final Request model, final int position) {
+            protected void onBindViewHolder(@NonNull OrderViewHolder viewHolder, final int position, @NonNull final Request model) {
                 viewHolder.txtOrderId.setText(adapter.getRef(position).getKey());
                 viewHolder.txtOrderStatus.setText(Common.covertirCodigoAStatus(model.getStatus()));
                 viewHolder.txtOrderAddress.setText(model.getAddress());
@@ -114,9 +117,25 @@ public class OrderStatus extends AppCompatActivity {
                     }
                 });
             }
+
+            @NonNull
+            @Override
+            public OrderViewHolder onCreateViewHolder(ViewGroup parent, int i) {
+                View itemView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.order_layout, parent, false);
+                return new OrderViewHolder(itemView);
+            }
         };
+        adapter.startListening();
+
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 
     private void deleteOrder(String key) {
@@ -173,8 +192,7 @@ public class OrderStatus extends AppCompatActivity {
                                         public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
                                             if (response.body().success == 1) {
                                                 Toast.makeText(OrderStatus.this, "Pedido actualizado!", Toast.LENGTH_SHORT).show();
-                                            } else
-                                            {
+                                            } else {
                                                 Toast.makeText(OrderStatus.this, "Pedido actualizado pero falló la notificacion!", Toast.LENGTH_SHORT).show();
                                             }
                                         }

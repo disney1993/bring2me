@@ -99,7 +99,8 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
                         currentFood.getName(),
                         numberButton.getNumber(),
                         currentFood.getPrice(),
-                        currentFood.getDiscount()
+                        currentFood.getDiscount(),
+                        currentFood.getImage()
                 ));
                 Toast.makeText(FoodDetail.this, "Agregado al carrito", Toast.LENGTH_SHORT).show();
             }

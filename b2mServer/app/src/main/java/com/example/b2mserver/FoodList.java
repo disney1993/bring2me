@@ -16,7 +16,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
+import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -26,10 +27,12 @@ import com.example.b2mserver.Interface.ItemClickListener;
 import com.example.b2mserver.Model.Food;
 import com.example.b2mserver.ViewHolder.FoodViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -162,26 +165,26 @@ public class FoodList extends AppCompatActivity {
             final String imageName = UUID.randomUUID().toString();
             final StorageReference imageFolder = storageReference.child("images/" + imageName);
             imageFolder.putFile(saveUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    mDialog.dismiss();
-                    Toast.makeText(FoodList.this, "Archivo subido!", Toast.LENGTH_SHORT).show();
-                    imageFolder.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            //si la imagen se subio y podemos obtener el link entonces enviamos la info de la categor'ia
-                            newFood = new Food();
-                            newFood.setName(etName.getText().toString());
-                            newFood.setDescription(etDescription.getText().toString());
-                            newFood.setPrice(etPrice.getText().toString());
-                            newFood.setDiscount(etDiscount.getText().toString());
-                            newFood.setMenuId(categoryId);
-                            newFood.setImage(uri.toString());
+                                                                  @Override
+                                                                  public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                                      mDialog.dismiss();
+                                                                      Toast.makeText(FoodList.this, "Archivo subido!", Toast.LENGTH_SHORT).show();
+                                                                      imageFolder.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                                          @Override
+                                                                          public void onSuccess(Uri uri) {
+                                                                              //si la imagen se subio y podemos obtener el link entonces enviamos la info de la categor'ia
+                                                                              newFood = new Food();
+                                                                              newFood.setName(etName.getText().toString());
+                                                                              newFood.setDescription(etDescription.getText().toString());
+                                                                              newFood.setPrice(etPrice.getText().toString());
+                                                                              newFood.setDiscount(etDiscount.getText().toString());
+                                                                              newFood.setMenuId(categoryId);
+                                                                              newFood.setImage(uri.toString());
 
-                        }
-                    });
-                }
-            }
+                                                                          }
+                                                                      });
+                                                                  }
+                                                              }
             )
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -209,17 +212,15 @@ public class FoodList extends AppCompatActivity {
     }
 
     private void loadListFood(String categoryId) {
-        adapter = new FirebaseRecyclerAdapter<Food, FoodViewHolder>(
-                Food.class,
-                R.layout.food_item,
-                FoodViewHolder.class,
-                foodList.orderByChild("menuId").equalTo(categoryId)
-        ) {
+        Query listFoodByCategoryId = foodList.orderByChild("menuId").equalTo(categoryId);
+        FirebaseRecyclerOptions<Food> options = new FirebaseRecyclerOptions.Builder<Food>()
+                .setQuery(listFoodByCategoryId, Food.class)
+                .build();
+        adapter = new FirebaseRecyclerAdapter<Food, FoodViewHolder>(options) {
             @Override
-            protected void populateViewHolder(FoodViewHolder viewHolder, Food model, int position) {
+            protected void onBindViewHolder(@NonNull FoodViewHolder viewHolder, int position, @NonNull Food model) {
                 viewHolder.food_name.setText(model.getName());
-                Picasso.with(getBaseContext())
-                        .load(model.getImage())
+                Picasso.get().load(model.getImage())
                         .into(viewHolder.food_image);
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
@@ -228,9 +229,24 @@ public class FoodList extends AppCompatActivity {
                     }
                 });
             }
+
+            @NonNull
+            @Override
+            public FoodViewHolder onCreateViewHolder(ViewGroup parent, int i) {
+                View itemView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.food_item, parent, false);
+                return new FoodViewHolder(itemView);
+            }
         };
+        adapter.startListening();
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.startListening();
     }
 
     @Override

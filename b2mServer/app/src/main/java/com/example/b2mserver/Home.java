@@ -22,7 +22,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +33,7 @@ import com.example.b2mserver.Model.Category;
 import com.example.b2mserver.Model.Token;
 import com.example.b2mserver.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -239,16 +240,17 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     }
 
     private void loadMenu() {
-        adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(
-                Category.class,
-                R.layout.menu_item,
-                MenuViewHolder.class,
-                categories
-        ) {
+
+//        Query listFoodByCategoryId = foodList.orderByChild("menuId").equalTo(categoryId);
+        FirebaseRecyclerOptions<Category> options = new FirebaseRecyclerOptions.Builder<Category>()
+                .setQuery(categories, Category.class)
+                .build();
+
+        adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(options) {
             @Override
-            protected void populateViewHolder(MenuViewHolder viewHolder, Category model, int position) {
+            protected void onBindViewHolder(@NonNull MenuViewHolder viewHolder, int position, @NonNull Category model) {
                 viewHolder.txtMenuName.setText(model.getName());
-                Picasso.with(Home.this).load(model.getImage())
+                Picasso.get().load(model.getImage())
                         .into(viewHolder.imageView);
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
@@ -260,9 +262,24 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                     }
                 });
             }
+
+            @NonNull
+            @Override
+            public MenuViewHolder onCreateViewHolder(ViewGroup parent, int i) {
+                View itemView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.menu_item, parent, false);
+                return new MenuViewHolder(itemView);
+            }
         };
+        adapter.startListening();
+
         adapter.notifyDataSetChanged();//actualizar si hay cambios
         recycler_menu.setAdapter(adapter);
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.startListening();
     }
 
     @Override
