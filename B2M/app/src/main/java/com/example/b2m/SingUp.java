@@ -26,22 +26,22 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class SingUp extends AppCompatActivity {
     EditText etPhone, etName, etPassword, etSecureCode;
     FButton btnSingUp;
-
+/*
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
 
-        //para el estilo de la fuente siempre agregar antes del setContentView
+ /*       //para el estilo de la fuente siempre agregar antes del setContentView
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/cf.otf")
                 .setFontAttrId(R.attr.fontPath)
-                .build());
+                .build());*/
 
         setContentView(R.layout.activity_sing_up);
 

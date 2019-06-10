@@ -57,7 +57,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
     TextView txtFullName;
 
-    //Firebase conecci'on
+    //Firebase conección
     FirebaseDatabase database;
     DatabaseReference categories;
     //variables para obtener las imagenes del storage de firebase
@@ -110,11 +110,11 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
         //nombre del empleado en la vista
         View headerView = navigationView.getHeaderView(0);
-        txtFullName = (TextView) headerView.findViewById(R.id.txtFullName);
+        txtFullName = headerView.findViewById(R.id.txtFullName);
         txtFullName.setText(Common.currentUser.getName());
 
         //Inicializar vista
-        recycler_menu = (RecyclerView) findViewById(R.id.recycler_menu);
+        recycler_menu = findViewById(R.id.recycler_menu);
         recycler_menu.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recycler_menu.setLayoutManager(layoutManager);
@@ -242,6 +242,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     private void loadMenu() {
 
 //        Query listFoodByCategoryId = foodList.orderByChild("menuId").equalTo(categoryId);
+
         FirebaseRecyclerOptions<Category> options = new FirebaseRecyclerOptions.Builder<Category>()
                 .setQuery(categories, Category.class)
                 .build();
@@ -250,7 +251,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             @Override
             protected void onBindViewHolder(@NonNull MenuViewHolder viewHolder, int position, @NonNull Category model) {
                 viewHolder.txtMenuName.setText(model.getName());
-                Picasso.get().load(model.getImage())
+                Picasso.with(getBaseContext()).load(model.getImage())
                         .into(viewHolder.imageView);
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
@@ -276,10 +277,11 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         adapter.notifyDataSetChanged();//actualizar si hay cambios
         recycler_menu.setAdapter(adapter);
     }
+
     @Override
     protected void onStop() {
         super.onStop();
-        adapter.startListening();
+        adapter.stopListening();
     }
 
     @Override
@@ -322,6 +324,14 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         if (id == R.id.nav_orders) {
             Intent orders = new Intent(Home.this, OrderStatus.class);
             startActivity(orders);
+        }
+       /* if (id == R.id.nav_banner) {
+            Intent orders = new Intent(Home.this, OrderStatus.class);
+            startActivity(banner);
+        }*/
+        if (id == R.id.nav_banner) {
+            Intent banner = new Intent(Home.this, BannerActivity.class);
+            startActivity(banner);
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

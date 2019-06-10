@@ -1,6 +1,7 @@
 package com.example.b2m;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,6 +21,8 @@ import com.example.b2m.Database.Database;
 import com.example.b2m.Model.Food;
 import com.example.b2m.Model.Order;
 import com.example.b2m.Model.Rating;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,6 +34,7 @@ import com.stepstone.apprating.listener.RatingDialogListener;
 
 import java.util.Arrays;
 
+import info.hoang8f.widget.FButton;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -50,6 +54,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
     DatabaseReference foods;
     DatabaseReference ratingTbl;
     Food currentFood;
+    FButton btnShowComment;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -72,6 +77,15 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
 
         setContentView(R.layout.activity_food_detail);
 
+        btnShowComment = (FButton) findViewById(R.id.btnShowComment);
+        btnShowComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent =new Intent(FoodDetail.this,ShowComment.class);
+                intent.putExtra(Common.INTENT_FOOD_ID,foodId);
+                startActivity(intent);
+            }
+        });
         //Firebase
         database = FirebaseDatabase.getInstance();
         foods = database.getReference("Foods");
@@ -184,7 +198,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
                 currentFood = dataSnapshot.getValue(Food.class);
 
                 //colocar la imagen del producto
-                Picasso.get().load(currentFood.getImage())
+                Picasso.with(getBaseContext()).load(currentFood.getImage())
                         .into(food_image);
 
                 collapsingToolbarLayout.setTitle(currentFood.getName());
@@ -210,6 +224,15 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
                 foodId,
                 String.valueOf(value),
                 comments);
+        ratingTbl.push().setValue(rating)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(FoodDetail.this, "Gracias por valorar!", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+        /*
         ratingTbl.child(Common.currentUser.getPhone()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -229,7 +252,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
     }
 
     @Override

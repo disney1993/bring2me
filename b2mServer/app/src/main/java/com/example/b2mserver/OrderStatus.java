@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.b2mserver.Common.Common;
+import com.example.b2mserver.Model.Category;
 import com.example.b2mserver.Model.MyResponse;
 import com.example.b2mserver.Model.Notification;
 import com.example.b2mserver.Model.Request;

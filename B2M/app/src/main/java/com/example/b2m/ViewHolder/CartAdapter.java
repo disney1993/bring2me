@@ -86,7 +86,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
         //       .buildRound("" + ListData.get(position).getQuantity(), Color.RED);
         // holder.img_cart_count.setImageDrawable(drawable);
 
-        Picasso.get()
+        Picasso.with(cart.getBaseContext())
                 .load(listData.get(position).getImage())
                 .resize(70,70)
                 .centerCrop()

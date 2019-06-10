@@ -38,22 +38,24 @@ public class SingIn extends AppCompatActivity {
 
     FirebaseDatabase database;
     DatabaseReference table_user;
+/*
 
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
+*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
 
-        //para el estilo de la fuente siempre agregar antes del setContentView
+        /*//para el estilo de la fuente siempre agregar antes del setContentView
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/cf.otf")
                 .setFontAttrId(R.attr.fontPath)
-                .build());
+                .build());*/
 
         setContentView(R.layout.activity_sing_in);
         etPassword = (EditText) findViewById(R.id.etPassword);

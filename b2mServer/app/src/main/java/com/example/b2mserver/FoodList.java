@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -220,7 +219,7 @@ public class FoodList extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull FoodViewHolder viewHolder, int position, @NonNull Food model) {
                 viewHolder.food_name.setText(model.getName());
-                Picasso.get().load(model.getImage())
+                Picasso.with(getBaseContext()).load(model.getImage())
                         .into(viewHolder.food_image);
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
@@ -246,7 +245,7 @@ public class FoodList extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        adapter.startListening();
+        adapter.stopListening();
     }
 
     @Override

@@ -23,6 +23,7 @@
             android:src="@drawable/my_bg" />
 
         <LinearLayout
+            android:layout_margin="10dp"
             android:weightSum="10"
             android:orientation="horizontal"
             android:layout_width="match_parent"

@@ -91,9 +91,14 @@ public class FoodList extends AppCompatActivity {
         }
 
         @Override
-        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+        public void onBitmapFailed(Drawable errorDrawable) {
 
         }
+
+        /*@Override
+        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+        }*/
 
         @Override
         public void onPrepareLoad(Drawable placeHolderDrawable) {
@@ -168,6 +173,57 @@ public class FoodList extends AppCompatActivity {
                         return;
                     }
                 }
+
+                //buscar
+                materialSearchBar = (MaterialSearchBar) findViewById(R.id.searchBar);
+                materialSearchBar.setHint("Ingresa un producto");
+                //materialSearchBar.setSpeechMode(false);  ya no es necesario por la propiedad del xml
+                loadSuggest();//funcion para sugerir con los productos de firebase
+
+                materialSearchBar.setCardViewElevation(10);
+                materialSearchBar.addTextChangeListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        //cuando el ususario escibe su texto se cambian las sugerencias
+
+                        List<String> suggest = new ArrayList<>();
+                        for (String search : suggestList) {
+                            if (search.toLowerCase().contains(materialSearchBar.getText().toLowerCase()))
+                                suggest.add(search);
+                        }
+                        materialSearchBar.setLastSuggestions(suggest);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+                materialSearchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
+                    @Override
+                    public void onSearchStateChanged(boolean enabled) {
+                        //cuando se cierra la barra de busqueda se restablecen el adaptador
+                        if (!enabled)
+                            recyclerView.setAdapter(adapter);
+                    }
+
+                    @Override
+                    public void onSearchConfirmed(CharSequence text) {
+                        //cuando la busqueda finaliza mostrar los resultados
+                        startSearch(text);
+                    }
+
+                    @Override
+                    public void onButtonClicked(int buttonCode) {
+
+                    }
+                });
+
             }
         });
         recyclerView = (RecyclerView) findViewById(R.id.recycler_food);
@@ -175,56 +231,6 @@ public class FoodList extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-
-        //buscar
-        materialSearchBar = (MaterialSearchBar) findViewById(R.id.searchBar);
-        materialSearchBar.setHint("Ingresa un producto");
-        //materialSearchBar.setSpeechMode(false);  ya no es necesario por la propiedad del xml
-        loadSuggest();//funcion para sugerir con los productos de firebase
-        materialSearchBar.setLastSuggestions(suggestList);
-        materialSearchBar.setCardViewElevation(10);
-        materialSearchBar.addTextChangeListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //cuando el ususario escibe su texto se cambian las sugerencias
-
-                List<String> suggest = new ArrayList<>();
-                for (String search : suggestList) {
-                    if (search.toLowerCase().contains(materialSearchBar.getText().toLowerCase()))
-                        suggest.add(search);
-                }
-                materialSearchBar.setLastSuggestions(suggest);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        materialSearchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
-            @Override
-            public void onSearchStateChanged(boolean enabled) {
-                //cuando se cierra la barra de busqueda se restablecen el adaptador
-                if (!enabled)
-                    recyclerView.setAdapter(adapter);
-            }
-
-            @Override
-            public void onSearchConfirmed(CharSequence text) {
-                //cuando la busqueda finaliza mostrar los resultados
-                startSearch(text);
-            }
-
-            @Override
-            public void onButtonClicked(int buttonCode) {
-
-            }
-        });
     }
 
     @Override
@@ -245,7 +251,7 @@ public class FoodList extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull FoodViewHolder viewHolder, int position, @NonNull Food model) {
                 viewHolder.food_name.setText(model.getName());
-                Picasso.get().load(model.getImage())
+                Picasso.with(getBaseContext()).load(model.getImage())
                         .into(viewHolder.food_image);
 
                 final Food local = model;
@@ -281,6 +287,7 @@ public class FoodList extends AppCompatActivity {
                             Food item = postSnapshot.getValue(Food.class);
                             suggestList.add(item.getName());//a;adir a la lista de sugerencias
                         }
+                        materialSearchBar.setLastSuggestions(suggestList);
                     }
 
                     @Override
@@ -302,7 +309,7 @@ public class FoodList extends AppCompatActivity {
             protected void onBindViewHolder(@NonNull final FoodViewHolder viewHolder, final int position, @NonNull final Food model) {
                 viewHolder.food_name.setText(model.getName());
                 viewHolder.food_price.setText(String.format("$ %s", model.getPrice().toString()));
-                Picasso.get().load(model.getImage())
+                Picasso.with(getBaseContext()).load(model.getImage())
                         .into(viewHolder.food_image);
                 //compra rapida
                 viewHolder.quick_cart.setOnClickListener(new View.OnClickListener() {
@@ -327,7 +334,7 @@ public class FoodList extends AppCompatActivity {
                 viewHolder.share_image.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Picasso.get()
+                        Picasso.with(getBaseContext())
                                 .load(model.getImage())
                                 .into(target);
                     }
@@ -374,6 +381,6 @@ public class FoodList extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         adapter.stopListening();
-        searchAdapter.stopListening();
+//        searchAdapter.stopListening();
     }
 }

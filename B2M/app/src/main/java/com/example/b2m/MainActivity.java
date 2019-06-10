@@ -11,7 +11,6 @@ import android.content.pm.Signature;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -43,17 +42,20 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import dmax.dialog.SpotsDialog;
+import io.paperdb.Paper;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 7171;
     //private static final String TAG = "MainActivity";
+    Button btnSingIn, btnSingUp;
     Button btnContinue;
     TextView txtSlogan;
 
     FirebaseDatabase database;
     DatabaseReference users;
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -80,7 +82,9 @@ public class MainActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
 
-        btnContinue = (Button) findViewById(R.id.btn_continue);
+        btnContinue = (Button) findViewById(R.id.btn_continuar);
+        btnSingIn = (Button) findViewById(R.id.btnSingIn);
+        btnSingUp = (Button) findViewById(R.id.btnSingUp);
         txtSlogan = (TextView) findViewById(R.id.txtSlogan);
 
 //        Button logTokenButton = findViewById(R.id.logTokenButton);
@@ -91,9 +95,23 @@ public class MainActivity extends AppCompatActivity {
         txtSlogan.setTypeface(face);
 
         //incializzar Paper
-        //Paper.init(this);
+        Paper.init(this);
 
+        btnSingIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent singIn = new Intent(MainActivity.this, SingIn.class);
+                startActivity(singIn);
+            }
+        });
 
+        btnSingUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent singUp = new Intent(MainActivity.this, SingUp.class);
+                startActivity(singUp);
+            }
+        });
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (AccountKit.getCurrentAccessToken()!=null)
+        if (AccountKit.getCurrentAccessToken() != null)
         {
             //crear un alertdialog
             final AlertDialog waitingDialog = new SpotsDialog.Builder().setContext(this).build();
@@ -130,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
 
                                 }
                             });
-
                 }
 
                 @Override
@@ -141,14 +158,14 @@ public class MainActivity extends AppCompatActivity {
         }
         //ya no sirve por el login con facebook
         //Revisar el Recordarme
-        /*String user = Paper.book().read(Common.USER_KEY);
+        String user = Paper.book().read(Common.USER_KEY);
         String pwd = Paper.book().read(Common.PWD_KEY);
         if (user != null && pwd != null) {
             if (!user.isEmpty() && !pwd.isEmpty()) ;
             login(user, pwd);
-        }*/
+        }
 
-      /*  logTokenButton.setOnClickListener(new View.OnClickListener() {
+       /*logTokenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Get token
@@ -202,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*private void login(final String phone, final String pwd) {
+    private void login(final String phone, final String pwd) {
 
         //Inicializar firebase
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -248,9 +265,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
     }
-*/
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode,Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE) {
             AccountKitLoginResult result = data.getParcelableExtra(AccountKitLoginResult.RESULT_KEY);
@@ -283,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
                                                 //creamos el nuevo usuario y lo logueamos
                                                 User newUser = new User();
                                                 newUser.setPhone(userPhone);
-                                                newUser.setName("Usuario");
+                                                newUser.setName("");
                                                 //agregar a firebase
                                                 users.child(userPhone)
                                                         .setValue(newUser)
@@ -298,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
                                                                             @Override
                                                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                                                 User localUser = dataSnapshot.getValue(User.class);
+                                                                                //localUser.setPhone(userPhone);
                                                                                 //mismo codigo q el login normal
                                                                                 Intent homeIntent = new Intent(MainActivity.this, Home.class);
                                                                                 Common.currentUser = localUser;
@@ -324,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
                                                                 //mismo codigo q el login normal
                                                                 Intent homeIntent = new Intent(MainActivity.this, Home.class);
                                                                 Common.currentUser = localUser;
-//                                                                homeIntent.putExtra("userPhone",Common.currentUser.getPhone());
+                                                                //homeIntent.putExtra("userPhone",Common.currentUser.getPhone());
 
                                                                 startActivity(homeIntent);
                                                                 waitingDialog.dismiss();

@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,20 +28,31 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.andremion.counterfab.CounterFab;
+import com.daimajia.slider.library.Animations.DescriptionAnimation;
+import com.daimajia.slider.library.SliderLayout;
+import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.example.b2m.Common.Common;
 import com.example.b2m.Database.Database;
 import com.example.b2m.Interface.ItemClickListener;
+import com.example.b2m.Model.Banner;
 import com.example.b2m.Model.Category;
 import com.example.b2m.Model.Token;
 import com.example.b2m.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.rey.material.widget.Slider;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -64,6 +76,10 @@ public class Home extends AppCompatActivity
 
     CounterFab fab;
 
+    //slider
+    HashMap<String, String> image_list;
+    SliderLayout mSlider;
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -81,6 +97,8 @@ public class Home extends AppCompatActivity
                 .build());
 
         setContentView(R.layout.activity_home);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Menu");
         setSupportActionBar(toolbar);
@@ -136,7 +154,7 @@ public class Home extends AppCompatActivity
             @Override
             protected void onBindViewHolder(@NonNull MenuViewHolder viewHolder, int position, @NonNull Category model) {
                 viewHolder.txtMenuName.setText(model.getName());
-                Picasso.get().load(model.getImage())
+                Picasso.with(getBaseContext()).load(model.getImage())
                         .into(viewHolder.imageView);
                 final Category clickItem = model;
                 viewHolder.setItemClickListener(new ItemClickListener() {
@@ -183,7 +201,7 @@ public class Home extends AppCompatActivity
         //txtFullname.setText(Common.currentUser.getName());
         //Cargar menu
         recycler_menu = (RecyclerView) findViewById(R.id.recycler_menu);
-        //recycler_menu.setHasFixedSize(true);
+        recycler_menu.setHasFixedSize(true);
         //layoutManager = new LinearLayoutManager(this);
         //recycler_menu.setLayoutManager(layoutManager);
         recycler_menu.setLayoutManager(new GridLayoutManager(this, 2));
@@ -192,14 +210,73 @@ public class Home extends AppCompatActivity
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(recycler_menu.getContext(),
                 R.anim.layout_fall_down);
         recycler_menu.setLayoutAnimation(controller);
-        updateToken(FirebaseInstanceId.getInstance().getToken());
-        /*updateToken(FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, new OnSuccessListener<InstanceIdResult>() {
+
+        //updateToken(FirebaseInstanceId.getInstance().getToken());
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
                 String newToken = instanceIdResult.getToken();
-                Log.e("newToken",newToken);
+                Log.e("nuevotoken=>",newToken);
+                updateToken(newToken);
             }
-        }));*/
+        });
+
+        //configurar slider...hay q llamar la funcion despues de inicializar el firebase
+        setupSlider();
+    }
+
+    private void setupSlider() {
+        mSlider = (SliderLayout) findViewById(R.id.slider);
+        image_list = new HashMap<>();
+
+        final DatabaseReference banners = database.getReference("Banner");
+        banners.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Banner banner = postSnapshot.getValue(Banner.class);
+                    //concatenamos el nombre y el id algo como PIZZA_01  el nombre para la descripcion y el id  para el click
+                    image_list.put(banner.getName() + "@@@" + banner.getId(), banner.getImage());
+                }
+                for (String key : image_list.keySet())
+                {
+                    String[] keySplit = key.split("@@@");
+                    String nameOfFood = keySplit[0];
+                    String idOfFood = keySplit[1];
+
+                    //crear el slider
+                    final TextSliderView textSliderView = new TextSliderView(getBaseContext());
+                    textSliderView.description(nameOfFood)
+                            .image(image_list.get(key))
+                            .setScaleType(BaseSliderView.ScaleType.Fit)
+                            .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
+                                @Override
+                                public void onSliderClick(BaseSliderView slider) {
+                                    Intent intent = new Intent(Home.this, FoodDetail.class);
+                                    //enviamos el id del producto al detalle
+                                    intent.putExtras(textSliderView.getBundle());
+                                    startActivity(intent);
+                                }
+                            });
+                    textSliderView.bundle(new Bundle());
+                    textSliderView.getBundle().putString("FoodId",idOfFood);
+
+                    mSlider.addSlider(textSliderView);
+                    banners.removeEventListener(this);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        mSlider.setPresetTransformer(SliderLayout.Transformer.Background2Foreground);
+        mSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
+        mSlider.setCustomAnimation(new DescriptionAnimation());
+        mSlider.setDuration(4000);
     }
 
     @Override
@@ -220,7 +297,36 @@ public class Home extends AppCompatActivity
     private void loadMenu() {
 
 
+        FirebaseRecyclerOptions<Category> options = new FirebaseRecyclerOptions.Builder<Category>()
+                .setQuery(category, Category.class)
+                .build();
+
+        adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(options) {
+            @NonNull
+            @Override
+            public MenuViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+                View itemView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.menu_item, parent, false);
+                return new MenuViewHolder(itemView);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull MenuViewHolder viewholder, int position, @NonNull Category model) {
+                viewholder.txtMenuName.setText(model.getName());
+                Picasso.with(getBaseContext()).load(model.getImage()).into(viewholder.imageView);
+                final Category clickItem = model;
+                viewholder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onClick(View view, int position, boolean isLongClick) {
+                        Intent foodList = new Intent(Home.this, FoodList.class);
+                        foodList.putExtra("CategoryId", adapter.getRef(position).getKey());
+                        startActivity(foodList);
+                    }
+                });
+            }
+        };
         adapter.startListening();
+
         recycler_menu.setAdapter(adapter);
         swipeRefreshLayout.setRefreshing(false);
 
@@ -233,6 +339,7 @@ public class Home extends AppCompatActivity
     protected void onStop() {
         super.onStop();
         adapter.stopListening();
+        mSlider.stopAutoCycle();
     }
 
     @Override
@@ -282,14 +389,51 @@ public class Home extends AppCompatActivity
             singIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(singIn);
         } else if (id == R.id.nav_update_name) {
-            showChangePasswordDialog();
+            showupdateNameDialog();
+        } else if (id == R.id.nav_update_pass) {
+            //showChangePasswordDialog();
+        } else if (id == R.id.nav_home_address) {
+            showHomeAddressDialog();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private void showChangePasswordDialog() {
+    private void showHomeAddressDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
+        alertDialog.setTitle("Cambiar dirección de casa");
+        alertDialog.setMessage("Por favor, completa la información");
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View layout_home = inflater.inflate(R.layout.home_address_layout, null);
+        final MaterialEditText etHomeAddress = (MaterialEditText) layout_home.findViewById(R.id.etHomeAddress);
+
+        alertDialog.setView(layout_home);
+
+        alertDialog.setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                dialogInterface.dismiss();
+
+                Common.currentUser.setHomeAddress(etHomeAddress.getText().toString());
+
+                FirebaseDatabase.getInstance().getReference("Users")
+                        .child(Common.currentUser.getPhone())
+                        .setValue(Common.currentUser)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(Home.this, "Dirección actualizada", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        });
+
+        alertDialog.show();
+
+    }
+
+    private void showupdateNameDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
         alertDialog.setTitle("Cambiar nombre");
         alertDialog.setMessage("Por favor, completa la información");
