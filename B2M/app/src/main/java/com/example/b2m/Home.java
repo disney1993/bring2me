@@ -52,7 +52,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.rey.material.widget.Slider;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -217,7 +216,7 @@ public class Home extends AppCompatActivity
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
                 String newToken = instanceIdResult.getToken();
-                Log.e("nuevotoken=>",newToken);
+                Log.e("nuevotoken=>", newToken);
                 updateToken(newToken);
             }
         });
@@ -239,8 +238,7 @@ public class Home extends AppCompatActivity
                     //concatenamos el nombre y el id algo como PIZZA_01  el nombre para la descripcion y el id  para el click
                     image_list.put(banner.getName() + "@@@" + banner.getId(), banner.getImage());
                 }
-                for (String key : image_list.keySet())
-                {
+                for (String key : image_list.keySet()) {
                     String[] keySplit = key.split("@@@");
                     String nameOfFood = keySplit[0];
                     String idOfFood = keySplit[1];
@@ -260,7 +258,7 @@ public class Home extends AppCompatActivity
                                 }
                             });
                     textSliderView.bundle(new Bundle());
-                    textSliderView.getBundle().putString("FoodId",idOfFood);
+                    textSliderView.getBundle().putString("FoodId", idOfFood);
 
                     mSlider.addSlider(textSliderView);
                     banners.removeEventListener(this);

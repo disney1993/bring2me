@@ -13,11 +13,11 @@
 
         <com.mancj.materialsearchbar.MaterialSearchBar
             android:id="@+id/searchBar"
-            app:mt_searchBarColor="@color/com_facebook_likeview_text_color"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             app:mt_hint="Ingresa tu producto"
+            app:mt_searchBarColor="@color/com_facebook_likeview_text_color"
             app:mt_speechMode="false" />
 
         <android.support.v7.widget.RecyclerView

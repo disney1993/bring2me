@@ -236,7 +236,7 @@ public class FoodList extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (adapter!=null)
+        if (adapter != null)
             adapter.startListening();
     }
 
@@ -365,6 +365,7 @@ public class FoodList extends AppCompatActivity {
                     }
                 });
             }
+
             @Override
             public FoodViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View itemView = LayoutInflater.from(parent.getContext())

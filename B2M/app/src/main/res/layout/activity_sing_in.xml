@@ -8,12 +8,13 @@
     tools:context=".SingIn">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_centerInParent="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:orientation="vertical">
+
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/etPhone"
             android:layout_width="match_parent"
@@ -39,29 +40,30 @@
             android:textSize="34sp" />
 
         <LinearLayout
-            android:orientation="horizontal"
-            android:weightSum="2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
             <com.rey.material.widget.CheckBox
                 android:id="@+id/ckbRemember"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
                 style="@style/Material.Drawable.CheckBox"
-                android:text="Recordarme"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:gravity="center_vertical"
+                android:text="Recordarme"
                 android:textColor="@android:color/white"
                 app:cbd_strokeColor="@android:color/white"
-                app:cbd_tickColor="@color/colorPrimaryDark"
-                />
+                app:cbd_tickColor="@color/colorPrimaryDark" />
+
             <TextView
                 android:id="@+id/txtForgotPwd"
-                android:textColor="@android:color/white"
-                android:text="@string/forgot_pwd"
-                android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/forgot_pwd"
+                android:textColor="@android:color/white" />
 
         </LinearLayout>
 
@@ -69,20 +71,19 @@
 
     <info.hoang8f.widget.FButton
         android:id="@+id/btnSingIn"
-        android:text="Ingresar"
-        android:textColor="@android:color/white"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_margin="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Ingresar"
+        android:textColor="@android:color/white"
+        app:cornerRadius="4dp"
         app:fButtonColor="@color/btnSingActive"
         app:shadowColor="@android:color/black"
         app:shadowEnabled="true"
-        app:shadowHeight="5dp"
-        app:cornerRadius="4dp"
-        />
+        app:shadowHeight="5dp" />
 
 
 </RelativeLayout>
