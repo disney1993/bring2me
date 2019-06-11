@@ -38,6 +38,29 @@
             app:met_primaryColor="@color/colorPrimary"
             app:met_singleLineEllipsis="true" />
 
+        <TextView
+            android:text="Método de pago"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/rdiCOD"
+                android:text="Envío contra reembolso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:id="@+id/rdiPaypal"
+                android:text="Paypal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </RadioGroup>
+        <TextView
+            android:text="Método de envio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

@@ -98,7 +98,7 @@ public class Cart extends AppCompatActivity implements LocationListener {
     List<Order> cart = new ArrayList<>();
 
     CartAdapter adapter;
-    APIService mService;
+   // APIService mService;
 
     PlacesClient placesClient;
     Place shippingAddress;
@@ -107,7 +107,7 @@ public class Cart extends AppCompatActivity implements LocationListener {
             Place.Field.NAME,
             Place.Field.LAT_LNG,
             Place.Field.ADDRESS);
-    AutocompleteSupportFragment autocompleteSupportFragment;
+    AutocompleteSupportFragment edtAddress;
 
     //pago con PAYPAL
     static PayPalConfiguration config = new PayPalConfiguration()
@@ -133,11 +133,13 @@ public class Cart extends AppCompatActivity implements LocationListener {
 
     //declarar google map api retrofit
     IGoogleService mGoogleMapService;
+    APIService mService;
 
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -315,12 +317,14 @@ public class Cart extends AppCompatActivity implements LocationListener {
         final RadioButton rdiShipToAddress = order_address_comment.findViewById(R.id.radioShipToAddress);
         final RadioButton rdiHomeAddress = order_address_comment.findViewById(R.id.radioHomeAddress);
 
+        final RadioButton rdiCOD = order_address_comment.findViewById(R.id.rdiCOD);
+        final RadioButton rdiPaypal = order_address_comment.findViewById(R.id.rdiPaypal);
 
         //eventos radios
 
         rdiHomeAddress.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
                     if (Common.currentUser.getHomeAddress() != null || !TextUtils.isEmpty(Common.currentUser.getHomeAddress())) {
                         address = Common.currentUser.getHomeAddress();
@@ -340,13 +344,15 @@ public class Cart extends AppCompatActivity implements LocationListener {
                 //enviar a esta direccion
                 if (isChecked)//==true
                 {
-                    mGoogleMapService.getAddressName(String.format("https://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=false&key=AIzaSyCFRY-knPZg-icqg_0-664RnFGq08QkKFk", mLastLocation.getLatitude(), mLastLocation.getLongitude()))
+                    mGoogleMapService.getAddressName(String.format("https://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=false&key=AIzaSyCFRY-knPZg-icqg_0-664RnFGq08QkKFk",
+                            mLastLocation.getLatitude(),
+                            mLastLocation.getLongitude()))
                             .enqueue(new Callback<String>() {
                                 @Override
                                 public void onResponse(Call<String> call, Response<String> response) {
                                     //si se recupera el api con OK
                                     try {
-                                        JSONObject jsonObject = new JSONObject(response.body());
+                                        JSONObject jsonObject = new JSONObject(response.body().toString());
                                         //JSONObject jsonObject = new JSONObject(response.body().toString());
                                         JSONArray resultsArray = jsonObject.getJSONArray("results");
                                         JSONObject firstObject = resultsArray.getJSONObject(0);
@@ -395,7 +401,7 @@ public class Cart extends AppCompatActivity implements LocationListener {
                         return;
                     }
                 }
-                if (!TextUtils.isEmpty(address)) {
+                if (TextUtils.isEmpty(address)) {
                     Toast.makeText(Cart.this, "Por favor, ingresa una dirección o selecciona una opción", Toast.LENGTH_SHORT).show();
                     getSupportFragmentManager().beginTransaction()
                             .remove(getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment))
@@ -404,19 +410,61 @@ public class Cart extends AppCompatActivity implements LocationListener {
                 }
                 comment = etComment.getText().toString();
 
-                String formatearTotal = txtTotalPrice.getText().toString()
-                        .replace("$", "")
-                        .replace(",", ".");
-                PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(formatearTotal),
-                        "USD",
-                        "Pedido Bring2Me",
-                        PayPalPayment.PAYMENT_INTENT_SALE);
-                Intent intent = new Intent(getApplicationContext(), PaymentActivity.class);
 
-                intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
-                intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payPalPayment);
+                //ver opcion de pago
+                if (!rdiCOD.isChecked() && !rdiCOD.isChecked())//si ambos estan desactivados
+                {
+                    Toast.makeText(Cart.this, "Por favor, selecciona una opción de pago", Toast.LENGTH_SHORT).show();
+                    getSupportFragmentManager().beginTransaction()
+                            .remove(getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment))
+                            .commit();
+                    return;
+                } else if (rdiPaypal.isChecked()) {
+                    String formatearTotal = txtTotalPrice.getText().toString()
+                            .replace("$", "")
+                            .replace(",", ".");
+                    PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(formatearTotal),
+                            "USD",
+                            "Pedido Bring2Me",
+                            PayPalPayment.PAYMENT_INTENT_SALE);
+                    Intent intent = new Intent(getApplicationContext(), PaymentActivity.class);
+                    intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+                    intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payPalPayment);
+                    startActivityForResult(intent, PAYPAL_REQUEST_CODE);
 
-                startActivityForResult(intent, PAYPAL_REQUEST_CODE);
+                }else if (rdiCOD.isChecked())
+                {
+                    //creamos el nuevo request
+                    Request request = new Request(
+                            Common.currentUser.getPhone(),
+                            Common.currentUser.getName(),
+                            address,
+                            txtTotalPrice.getText().toString(),
+                            "0",//stats por defecto
+                            comment,
+                            "COD",
+                            "No Pagado",//el estado del json
+                            String.format("%s,%s", mLastLocation.getLatitude(),mLastLocation.getLongitude()),
+                            cart
+                    );
+                    //enviar a firebase el pedido
+                    //usaremos el System.CurrentTimemillis para teclear
+
+                    String order_number = String.valueOf(System.currentTimeMillis());
+
+                    requests.child(order_number)
+                            .setValue(request);
+                    //eliminar carrito
+                    new Database(getBaseContext()).cleanCart();
+
+
+                    sendNotificationOrder(order_number);
+                    //comentar las 2 lineas
+                    Toast.makeText(Cart.this, "Gracias, Pedido realizado", Toast.LENGTH_SHORT).show();
+                    finish();
+
+                }
+
 
                 //quitar el fragment
                 getSupportFragmentManager().beginTransaction()
@@ -456,22 +504,22 @@ public class Cart extends AppCompatActivity implements LocationListener {
 
 
     private void setupPlaceAutocomplete() {
-        autocompleteSupportFragment = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        edtAddress = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         //oculatr icono de busqueda
-        autocompleteSupportFragment.getView().findViewById(R.id.places_autocomplete_search_button).setVisibility(View.GONE);
+        edtAddress.getView().findViewById(R.id.places_autocomplete_search_button).setVisibility(View.GONE);
         //poner un hint para el autocomplete edittext
-        ((EditText) autocompleteSupportFragment.getView().findViewById(R.id.places_autocomplete_search_input)).setHint("Ingresa tu dirección");
+        ((EditText) edtAddress.getView().findViewById(R.id.places_autocomplete_search_input)).setHint("Ingresa tu dirección");
         //configurar el tama;o del texto
-        ((EditText) autocompleteSupportFragment.getView().findViewById(R.id.places_autocomplete_search_input)).setTextSize(14);
+        ((EditText) edtAddress.getView().findViewById(R.id.places_autocomplete_search_input)).setTextSize(14);
 
-        autocompleteSupportFragment.setPlaceFields(placeFields);
-        autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+        edtAddress.setPlaceFields(placeFields);
+        edtAddress.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
                 shippingAddress = place;
-                /*((EditText) autocompleteSupportFragment.getView().findViewById(R.id.places_autocomplete_search_input))
+                /*((EditText) edtAddress.getView().findViewById(R.id.places_autocomplete_search_input))
                         .setText(shippingAddress.getAddress().toString());*/
-                /*((EditText) autocompleteSupportFragment.getView().findViewById(R.id.places_autocomplete_search_input))
+                /*((EditText) edtAddress.getView().findViewById(R.id.places_autocomplete_search_input))
                         .setText(place.getAddress());*/
 
             }
@@ -508,6 +556,7 @@ public class Cart extends AppCompatActivity implements LocationListener {
                                 txtTotalPrice.getText().toString(),
                                 "0",//stats por defecto
                                 comment,
+                                "Paypal",
                                 jsonObject.getJSONObject("response").getString("state"),//el estado del json
                                 String.format("%s,%s", shippingAddress.getLatLng().latitude, shippingAddress.getLatLng().longitude),
                                 cart

@@ -18,6 +18,14 @@ public class User {
         this.secureCode = secureCode;
     }
 
+    public String getPassword() {
+        return Password;
+    }
+
+    public void setPassword(String password) {
+        Password = password;
+    }
+
     public String getIsStaff() {
         return IsStaff;
     }
@@ -50,13 +58,6 @@ public class User {
         Name = name;
     }
 
-    public String getPassword() {
-        return Password;
-    }
-
-    public void setPassword(String password) {
-        Password = password;
-    }
 
     public String getHomeAddress() {
         return homeAddress;

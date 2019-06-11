@@ -13,7 +13,7 @@
             android:id="@+id/nav_home_address"
             android:icon="@drawable/ic_home_black_24dp"
             android:iconTint="@color/white"
-            android:title="Dirección de casa"/>
+            android:title="Dirección de casa" />
         <item
             android:id="@+id/nav_cart"
             android:icon="@drawable/ic_shopping_cart_black_24dp"
@@ -25,16 +25,16 @@
             android:iconTint="@android:color/white"
             android:title="Pedidos" />
         <item
-            android:id="@+id/nav_update_pass"
-            android:icon="@drawable/ic_security_black_24dp"
-            android:iconTint="@android:color/white"
-            android:title="Modificar contraseña"/>
-        <item
             android:id="@+id/nav_update_name"
             android:icon="@drawable/ic_person_black_24dp"
             android:iconTint="@android:color/white"
-            android:title="Modificar nombre"
-            />
+            android:title="Modificar nombre" />
+        <item
+            android:id="@+id/nav_change_pwd"
+            android:icon="@drawable/ic_security_black_24dp"
+            android:iconTint="@android:color/white"
+            android:title="Modificar contraseña" />
+
         <item
             android:id="@+id/nav_log_out"
             android:icon="@drawable/ic_exit_to_app_black_24dp"

@@ -42,6 +42,7 @@ import com.example.b2m.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -53,6 +54,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
+import com.stepstone.apprating.C;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -388,14 +390,84 @@ public class Home extends AppCompatActivity
             startActivity(singIn);
         } else if (id == R.id.nav_update_name) {
             showupdateNameDialog();
-        } else if (id == R.id.nav_update_pass) {
-            //showChangePasswordDialog();
+        } else if (id == R.id.nav_change_pwd) {
+            showChangePasswordDialog();
         } else if (id == R.id.nav_home_address) {
             showHomeAddressDialog();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showChangePasswordDialog() {
+        AlertDialog.Builder alertDialog =new AlertDialog.Builder(Home.this);
+        alertDialog.setTitle("Modificar Password");
+        alertDialog.setMessage("Por favor, completa toda la información");
+
+        LayoutInflater inflater=LayoutInflater.from(this);
+        View layout_pwd=inflater.inflate(R.layout.change_password_layout,null);
+        final MaterialEditText edtPassword=(MaterialEditText) layout_pwd.findViewById(R.id.edtPassword);
+        final MaterialEditText edtNewPassword=(MaterialEditText) layout_pwd.findViewById(R.id.edtNewPassword);
+        final MaterialEditText edtRepeatPassword=(MaterialEditText) layout_pwd.findViewById(R.id.edtRepeatPassword);
+
+        alertDialog.setView(layout_pwd);
+
+        //boton
+        alertDialog.setPositiveButton("Modificar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //cambiar la contrase;a
+                //android.app.AlertDialog waitingDialog=new SpotsDialog(Home.this);
+                final android.app.AlertDialog waitingDialog = new SpotsDialog.Builder().setContext(Home.this).build();
+                waitingDialog.show();
+
+                //revisar viejo password
+                if (edtPassword.getText().toString().equals(Common.currentUser.getPassword()))
+                {
+                    //comparar nueva contrase;a y la repetida
+                    if(edtNewPassword.getText().toString().equals(edtRepeatPassword.getText().toString()))
+                    {
+                        Map<String,Object> passwordUpdate=new HashMap<>();
+                        passwordUpdate.put("Password",edtNewPassword.getText().toString());
+                        //actualizar
+                        DatabaseReference user =FirebaseDatabase.getInstance().getReference("Users");
+                        user.child(Common.currentUser.getPhone())
+                                .updateChildren(passwordUpdate)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        waitingDialog.dismiss();
+                                        Toast.makeText(Home.this, "Password actualizada!", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(Home.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                    else
+                    {
+                        waitingDialog.dismiss();
+                        Toast.makeText(Home.this, "El nuevo password no coincide", Toast.LENGTH_SHORT).show();
+                    }
+                }else
+                {
+                    waitingDialog.dismiss();
+                    Toast.makeText(Home.this, "Contraseña antigua equivocada", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
     }
 
     private void showHomeAddressDialog() {

@@ -6,9 +6,11 @@ import android.net.NetworkInfo;
 
 import com.example.b2m.Model.User;
 import com.example.b2m.Remote.APIService;
+import com.example.b2m.Remote.GoogleRetrofitCient;
 import com.example.b2m.Remote.IGoogleService;
 import com.example.b2m.Remote.RetrofitClient;
 import com.example.b2m.ShowComment;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 public class Common {
     public static User currentUser;
@@ -24,7 +26,7 @@ public class Common {
     }
 
     public static IGoogleService getGoogleMapAPI() {
-        return RetrofitClient.getGoogleClient(GOOGLE_API_URL).create(IGoogleService.class);
+        return GoogleRetrofitCient.getGoogleClient(GOOGLE_API_URL).create(IGoogleService.class);
     }
 
 
