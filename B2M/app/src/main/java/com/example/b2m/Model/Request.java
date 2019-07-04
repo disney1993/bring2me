@@ -11,7 +11,6 @@ public class Request {
     private String status;
     private String comment;
     private String paymentMethod;
-    //estado del pago
     private String paymentState;
     private String latLng;
     private List<Order> foods;//listado de los productos

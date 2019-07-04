@@ -77,7 +77,7 @@ public class SingIn extends AppCompatActivity {
         btnSingIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Common.isConectedToInternet(getBaseContext())) {
+                if (Common.isConnectedToInternet(getBaseContext())) {
                     //recordar ususario y contrasenia
                     if (ckbRemember.isChecked()) {
                         Paper.book().write(Common.USER_KEY, etPhone.getText().toString());

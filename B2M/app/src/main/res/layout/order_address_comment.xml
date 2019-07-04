@@ -55,6 +55,11 @@
                 android:text="Paypal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+           <RadioButton
+                android:id="@+id/rdiBring2MeBalance"
+                android:text="Saldo Bring2Me"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </RadioGroup>
         <TextView
@@ -65,12 +70,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <RadioButton
-                android:id="@+id/radioShipToAddress"
+                android:id="@+id/rdiShipToAddress"
                 android:text="Enviar a esta dirección"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <RadioButton
-                android:id="@+id/radioHomeAddress"
+                android:id="@+id/rdiHomeAddress"
                 android:text="Enviar a mi casa"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

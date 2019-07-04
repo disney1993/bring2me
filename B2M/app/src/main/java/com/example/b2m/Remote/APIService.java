@@ -1,6 +1,7 @@
 package com.example.b2m.Remote;
 
 
+import com.example.b2m.Model.DataMessage;
 import com.example.b2m.Model.MyResponse;
 import com.example.b2m.Model.Sender;
 
@@ -19,4 +20,8 @@ public interface APIService {
 
     @POST("fcm/send")
     Call<MyResponse> sendNotification(@Body Sender body);
+
+    @POST("fcm/send")
+    Call<MyResponse> sendNotification(@Body DataMessage body);
+
 }

@@ -62,7 +62,6 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
     }
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -81,8 +80,8 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
         btnShowComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent =new Intent(FoodDetail.this,ShowComment.class);
-                intent.putExtra(Common.INTENT_FOOD_ID,foodId);
+                Intent intent = new Intent(FoodDetail.this, ShowComment.class);
+                intent.putExtra(Common.INTENT_FOOD_ID, foodId);
                 startActivity(intent);
             }
         });
@@ -109,6 +108,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
             @Override
             public void onClick(View v) {
                 new Database(getBaseContext()).addToCart(new Order(
+                        Common.currentUser.getPhone(),
                         foodId,
                         currentFood.getName(),
                         numberButton.getNumber(),
@@ -120,7 +120,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
             }
         });
 
-        btnCart.setCount(new Database(this).getCountCart());
+        btnCart.setCount(new Database(this).getCountCart(Common.currentUser.getPhone()));
 
         food_description = (TextView) findViewById(R.id.food_description);
         food_name = (TextView) findViewById(R.id.food_name);
@@ -135,7 +135,7 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
         if (getIntent() != null)
             foodId = getIntent().getStringExtra("FoodId");
         if (!foodId.isEmpty()) {
-            if (Common.isConectedToInternet(getBaseContext())) {
+            if (Common.isConnectedToInternet(getBaseContext())) {
                 getDetailFood(foodId);
                 getRatingFood(foodId);
             } else {

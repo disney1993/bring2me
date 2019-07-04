@@ -10,6 +10,9 @@ public class Sender {
         this.notification = notification;
     }
 
+    public Sender() {
+    }
+
     public String getTo() {
         return to;
     }

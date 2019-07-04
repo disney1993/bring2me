@@ -119,8 +119,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (AccountKit.getCurrentAccessToken() != null)
-        {
+        if (AccountKit.getCurrentAccessToken() != null) {
             //crear un alertdialog
             final AlertDialog waitingDialog = new SpotsDialog.Builder().setContext(this).build();
             waitingDialog.show();
@@ -224,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
         //Inicializar firebase
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference table_user = database.getReference("Users");
-        if (Common.isConectedToInternet(getBaseContext())) {
+        if (Common.isConnectedToInternet(getBaseContext())) {
 
 
             final ProgressDialog mDialog = new ProgressDialog(MainActivity.this);
@@ -300,7 +299,8 @@ public class MainActivity extends AppCompatActivity {
                                                 //creamos el nuevo usuario y lo logueamos
                                                 User newUser = new User();
                                                 newUser.setPhone(userPhone);
-                                                newUser.setName("");
+                                                newUser.setName("Usuario: " + userPhone);
+                                                newUser.setBalance(String.valueOf(0.0));
                                                 //agregar a firebase
                                                 users.child(userPhone)
                                                         .setValue(newUser)
@@ -342,8 +342,7 @@ public class MainActivity extends AppCompatActivity {
                                                                 //mismo codigo q el login normal
                                                                 Intent homeIntent = new Intent(MainActivity.this, Home.class);
                                                                 Common.currentUser = localUser;
-                                                                //homeIntent.putExtra("userPhone",Common.currentUser.getPhone());
-
+                                                                homeIntent.putExtra("userPhone", Common.currentUser.getPhone());
                                                                 startActivity(homeIntent);
                                                                 waitingDialog.dismiss();
                                                                 finish();

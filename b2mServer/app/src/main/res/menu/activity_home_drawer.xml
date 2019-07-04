@@ -7,12 +7,14 @@
         <item
             android:id="@+id/nav_banner"
             android:icon="@drawable/ic_laptop_chromebook_black_24dp"
-            android:iconTint="@android:color/white"
             android:title="Banner de administración" />
+        <item
+            android:id="@+id/nav_message"
+            android:icon="@drawable/ic_message_black_24dp"
+            android:title="Enviar noticias"/>
         <item
             android:id="@+id/nav_menu"
             android:icon="@drawable/ic_restaurant_black_24dp"
-            android:iconTint="@android:color/white"
             android:title="Menú" />
         <!--<item
             android:id="@+id/nav_cart"

@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,9 +54,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
-import com.stepstone.apprating.C;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,8 +66,7 @@ import io.paperdb.Paper;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class Home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     FirebaseDatabase database;
     DatabaseReference category;
@@ -90,20 +91,15 @@ public class Home extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
-
         //para el estilo de la fuente siempre agregar antes del setContentView
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/cf.otf")
                 .setFontAttrId(R.attr.fontPath)
                 .build());
-
         setContentView(R.layout.activity_home);
-
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Menu");
         setSupportActionBar(toolbar);
-
         //swipe layout
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
@@ -113,7 +109,7 @@ public class Home extends AppCompatActivity
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (Common.isConectedToInternet(getBaseContext()))
+                if (Common.isConnectedToInternet(getBaseContext()))
                     loadMenu();
                 else {
                     Toast.makeText(getBaseContext(), "Por favor, revisa tu conexión!!!", Toast.LENGTH_SHORT).show();
@@ -125,7 +121,7 @@ public class Home extends AppCompatActivity
         swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (Common.isConectedToInternet(getBaseContext()))
+                if (Common.isConnectedToInternet(getBaseContext()))
                     loadMenu();
                 else {
                     Toast.makeText(getBaseContext(), "Por favor, revisa tu conexión!!!", Toast.LENGTH_SHORT).show();
@@ -133,16 +129,13 @@ public class Home extends AppCompatActivity
                 }
             }
         });
-
         //Inicializar Firebase
-
         database = FirebaseDatabase.getInstance();
         category = database.getReference("Category");
         //esto siempre depues del getinstance del database
         FirebaseRecyclerOptions<Category> options = new FirebaseRecyclerOptions.Builder<Category>()
                 .setQuery(category, Category.class)
                 .build();
-
         adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(options) {
             @NonNull
             @Override
@@ -165,16 +158,13 @@ public class Home extends AppCompatActivity
                         Intent foodList = new Intent(Home.this, FoodList.class);
                         //como el id de categoria es la clave primaria solo obtenemos la clave de este elemento
                         foodList.putExtra("CategoryId", adapter.getRef(position).getKey());
-
                         startActivity(foodList);
                         Toast.makeText(Home.this, "" + clickItem.getName(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         };
-
         Paper.init(this);
-
         fab = (CounterFab) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,18 +173,16 @@ public class Home extends AppCompatActivity
                 startActivity(cartIntent);
             }
         });
-        fab.setCount(new Database(this).getCountCart());
+
+        fab.setCount(new Database(this).getCountCart(Common.currentUser.getPhone()));
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
         //Cargar nombre de usuario
         View headerView = navigationView.getHeaderView(0);
         txtFullname = (TextView) headerView.findViewById(R.id.txtFullName);
@@ -206,14 +194,11 @@ public class Home extends AppCompatActivity
         //layoutManager = new LinearLayoutManager(this);
         //recycler_menu.setLayoutManager(layoutManager);
         recycler_menu.setLayoutManager(new GridLayoutManager(this, 2));
-
         //animacion
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(recycler_menu.getContext(),
                 R.anim.layout_fall_down);
         recycler_menu.setLayoutAnimation(controller);
-
         //updateToken(FirebaseInstanceId.getInstance().getToken());
-
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
@@ -222,7 +207,6 @@ public class Home extends AppCompatActivity
                 updateToken(newToken);
             }
         });
-
         //configurar slider...hay q llamar la funcion despues de inicializar el firebase
         setupSlider();
     }
@@ -230,7 +214,6 @@ public class Home extends AppCompatActivity
     private void setupSlider() {
         mSlider = (SliderLayout) findViewById(R.id.slider);
         image_list = new HashMap<>();
-
         final DatabaseReference banners = database.getReference("Banner");
         banners.addValueEventListener(new ValueEventListener() {
             @Override
@@ -244,7 +227,6 @@ public class Home extends AppCompatActivity
                     String[] keySplit = key.split("@@@");
                     String nameOfFood = keySplit[0];
                     String idOfFood = keySplit[1];
-
                     //crear el slider
                     final TextSliderView textSliderView = new TextSliderView(getBaseContext());
                     textSliderView.description(nameOfFood)
@@ -261,10 +243,8 @@ public class Home extends AppCompatActivity
                             });
                     textSliderView.bundle(new Bundle());
                     textSliderView.getBundle().putString("FoodId", idOfFood);
-
                     mSlider.addSlider(textSliderView);
                     banners.removeEventListener(this);
-
                 }
             }
 
@@ -282,7 +262,7 @@ public class Home extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        fab.setCount(new Database(this).getCountCart());
+        fab.setCount(new Database(this).getCountCart(Common.currentUser.getPhone()));
         if (adapter != null)
             adapter.startListening();
     }
@@ -295,12 +275,9 @@ public class Home extends AppCompatActivity
     }
 
     private void loadMenu() {
-
-
         FirebaseRecyclerOptions<Category> options = new FirebaseRecyclerOptions.Builder<Category>()
                 .setQuery(category, Category.class)
                 .build();
-
         adapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(options) {
             @NonNull
             @Override
@@ -326,10 +303,8 @@ public class Home extends AppCompatActivity
             }
         };
         adapter.startListening();
-
         recycler_menu.setAdapter(adapter);
         swipeRefreshLayout.setRefreshing(false);
-
         //animacion
         recycler_menu.getAdapter().notifyDataSetChanged();
         recycler_menu.scheduleLayoutAnimation();
@@ -361,10 +336,8 @@ public class Home extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        if (item.getItemId() == R.id.refrescar)
-            loadMenu();
-
+        if (item.getItemId() == R.id.menu_search)
+            startActivity(new Intent(Home.this, SearchActivity.class));
         return super.onOptionsItemSelected(item);
     }
 
@@ -373,11 +346,12 @@ public class Home extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         if (id == R.id.nav_menu) {
-
         } else if (id == R.id.nav_cart) {
             //vista de estado de pedidos
             Intent cartIntent = new Intent(Home.this, Cart.class);
             startActivity(cartIntent);
+        } else if (id == R.id.nav_favorites) {
+            startActivity(new Intent(Home.this, FavoritesActivity.class));
         } else if (id == R.id.nav_orders) {
             Intent orderIntent = new Intent(Home.this, OrderStatus.class);
             startActivity(orderIntent);
@@ -394,25 +368,59 @@ public class Home extends AppCompatActivity
             showChangePasswordDialog();
         } else if (id == R.id.nav_home_address) {
             showHomeAddressDialog();
+        } else if (id == R.id.nav_setting) {
+            showSettingDialog();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    private void showSettingDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
+        alertDialog.setTitle("Configuraciones");
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View layout_setting = inflater.inflate(R.layout.setting_layout, null);
+
+        final CheckBox ckb_suscribe_news = (CheckBox) layout_setting.findViewById(R.id.ckb_sub_new);
+        Paper.init(this);
+        String isSubscribe = Paper.book().read("sub_news");
+        if (isSubscribe == null || TextUtils.isEmpty(isSubscribe) || isSubscribe.equals("false"))
+            ckb_suscribe_news.setChecked(false);
+        else
+            ckb_suscribe_news.setChecked(true);
+
+
+        alertDialog.setView(layout_setting);
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                dialogInterface.dismiss();
+                if (ckb_suscribe_news.isChecked()) {
+                    FirebaseMessaging.getInstance().subscribeToTopic(Common.TOPICNAME);
+                    //Write Value
+                    Paper.book().write("sub_news", "true");
+                } else {
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(Common.TOPICNAME);
+                    //Write Value
+                    Paper.book().write("sub_news", "false");
+                }
+            }
+        });
+        alertDialog.show();
+    }
+
     private void showChangePasswordDialog() {
-        AlertDialog.Builder alertDialog =new AlertDialog.Builder(Home.this);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this);
         alertDialog.setTitle("Modificar Password");
         alertDialog.setMessage("Por favor, completa toda la información");
-
-        LayoutInflater inflater=LayoutInflater.from(this);
-        View layout_pwd=inflater.inflate(R.layout.change_password_layout,null);
-        final MaterialEditText edtPassword=(MaterialEditText) layout_pwd.findViewById(R.id.edtPassword);
-        final MaterialEditText edtNewPassword=(MaterialEditText) layout_pwd.findViewById(R.id.edtNewPassword);
-        final MaterialEditText edtRepeatPassword=(MaterialEditText) layout_pwd.findViewById(R.id.edtRepeatPassword);
-
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View layout_pwd = inflater.inflate(R.layout.change_password_layout, null);
+        final MaterialEditText edtPassword = (MaterialEditText) layout_pwd.findViewById(R.id.edtPassword);
+        final MaterialEditText edtNewPassword = (MaterialEditText) layout_pwd.findViewById(R.id.edtNewPassword);
+        final MaterialEditText edtRepeatPassword = (MaterialEditText) layout_pwd.findViewById(R.id.edtRepeatPassword);
         alertDialog.setView(layout_pwd);
-
         //boton
         alertDialog.setPositiveButton("Modificar", new DialogInterface.OnClickListener() {
             @Override
@@ -421,17 +429,14 @@ public class Home extends AppCompatActivity
                 //android.app.AlertDialog waitingDialog=new SpotsDialog(Home.this);
                 final android.app.AlertDialog waitingDialog = new SpotsDialog.Builder().setContext(Home.this).build();
                 waitingDialog.show();
-
                 //revisar viejo password
-                if (edtPassword.getText().toString().equals(Common.currentUser.getPassword()))
-                {
+                if (edtPassword.getText().toString().equals(Common.currentUser.getPassword())) {
                     //comparar nueva contrase;a y la repetida
-                    if(edtNewPassword.getText().toString().equals(edtRepeatPassword.getText().toString()))
-                    {
-                        Map<String,Object> passwordUpdate=new HashMap<>();
-                        passwordUpdate.put("Password",edtNewPassword.getText().toString());
+                    if (edtNewPassword.getText().toString().equals(edtRepeatPassword.getText().toString())) {
+                        Map<String, Object> passwordUpdate = new HashMap<>();
+                        passwordUpdate.put("Password", edtNewPassword.getText().toString());
                         //actualizar
-                        DatabaseReference user =FirebaseDatabase.getInstance().getReference("Users");
+                        DatabaseReference user = FirebaseDatabase.getInstance().getReference("Users");
                         user.child(Common.currentUser.getPhone())
                                 .updateChildren(passwordUpdate)
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -447,14 +452,11 @@ public class Home extends AppCompatActivity
                                         Toast.makeText(Home.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
-                    }
-                    else
-                    {
+                    } else {
                         waitingDialog.dismiss();
                         Toast.makeText(Home.this, "El nuevo password no coincide", Toast.LENGTH_SHORT).show();
                     }
-                }else
-                {
+                } else {
                     waitingDialog.dismiss();
                     Toast.makeText(Home.this, "Contraseña antigua equivocada", Toast.LENGTH_SHORT).show();
                 }
@@ -466,7 +468,6 @@ public class Home extends AppCompatActivity
                 dialog.dismiss();
             }
         });
-
         alertDialog.show();
     }
 
@@ -477,16 +478,12 @@ public class Home extends AppCompatActivity
         LayoutInflater inflater = LayoutInflater.from(this);
         View layout_home = inflater.inflate(R.layout.home_address_layout, null);
         final MaterialEditText etHomeAddress = (MaterialEditText) layout_home.findViewById(R.id.etHomeAddress);
-
         alertDialog.setView(layout_home);
-
         alertDialog.setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
                 dialogInterface.dismiss();
-
                 Common.currentUser.setHomeAddress(etHomeAddress.getText().toString());
-
                 FirebaseDatabase.getInstance().getReference("Users")
                         .child(Common.currentUser.getPhone())
                         .setValue(Common.currentUser)
@@ -498,9 +495,7 @@ public class Home extends AppCompatActivity
                         });
             }
         });
-
         alertDialog.show();
-
     }
 
     private void showupdateNameDialog() {
@@ -510,9 +505,7 @@ public class Home extends AppCompatActivity
         LayoutInflater inflater = LayoutInflater.from(this);
         View layout_name = inflater.inflate(R.layout.update_name_layout, null);
         final MaterialEditText edtName = (MaterialEditText) layout_name.findViewById(R.id.edtName);
-
         alertDialog.setView(layout_name);
-
         //boton
         alertDialog.setPositiveButton("Cambiar", new DialogInterface.OnClickListener() {
             @Override
@@ -520,11 +513,9 @@ public class Home extends AppCompatActivity
                 //cambiar contrasenia
                 final android.app.AlertDialog waitingDialog = new SpotsDialog.Builder().setContext(Home.this).build();
                 waitingDialog.show();
-
                 //cambiar nombre
                 Map<String, Object> update_name = new HashMap<>();
                 update_name.put("name", edtName.getText().toString());
-
                 FirebaseDatabase.getInstance()
                         .getReference("Users")
                         .child(Common.currentUser.getPhone())
@@ -539,16 +530,12 @@ public class Home extends AppCompatActivity
                         });
             }
         });
-
         alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-
         alertDialog.show();
-
-
     }
 }

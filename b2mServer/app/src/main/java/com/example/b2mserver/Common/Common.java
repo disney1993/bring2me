@@ -20,6 +20,8 @@ public class Common {
 
     public static final String UPDATE = "Actualizar";
     public static final String DELETE = "Eliminar";
+    public static String TOPICNAME = "Noticias";
+
 
     public static final int PICK_IMAGE_REQUEST = 71;
 
@@ -39,6 +41,9 @@ public class Common {
     }
 
     public static APIService getFCMClient(){
+        return FCMRetrofitClient.getClient(fcmUrl).create(APIService.class);
+    }
+    public static APIService getFCMService() {
         return FCMRetrofitClient.getClient(fcmUrl).create(APIService.class);
     }
 

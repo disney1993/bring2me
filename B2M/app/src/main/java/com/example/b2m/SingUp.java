@@ -55,7 +55,7 @@ public class SingUp extends AppCompatActivity {
         btnSingUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Common.isConectedToInternet(getBaseContext())) {
+                if (Common.isConnectedToInternet(getBaseContext())) {
                     final ProgressDialog mDialog = new ProgressDialog(SingUp.this);
                     mDialog.setMessage("Espera por favor...");
                     mDialog.show();

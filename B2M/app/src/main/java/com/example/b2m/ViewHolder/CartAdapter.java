@@ -1,7 +1,5 @@
 package com.example.b2m.ViewHolder;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -9,9 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.amulyakhare.textdrawable.TextDrawable;
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.example.b2m.Cart;
 import com.example.b2m.Common.Common;
@@ -25,42 +24,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-class CartViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-        View.OnCreateContextMenuListener {
-
-    public TextView txt_cart__name, txt_price;
-    public ElegantNumberButton btn_quantity;
-    public ImageView cart_image;
-
-    private ItemClickListener itemClickListener;
-
-    public void setTxt_cart__name(TextView txt_cart__name) {
-        this.txt_cart__name = txt_cart__name;
-    }
-
-    public CartViewHolder(@NonNull View itemView) {
-        super(itemView);
-        txt_cart__name = (TextView) itemView.findViewById(R.id.cart_item_name);
-        txt_price = (TextView) itemView.findViewById(R.id.cart_item_price);
-        btn_quantity = (ElegantNumberButton) itemView.findViewById(R.id.btn_quantity);
-        cart_image = (ImageView) itemView.findViewById(R.id.cart_image);
-
-        itemView.setOnCreateContextMenuListener(this);
-    }
-
-    @Override
-    public void onClick(View v) {
-
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu contextmenu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        contextmenu.setHeaderTitle("Seleccionar acción");
-        contextmenu.add(0, 0, getAdapterPosition(), Common.DELETE);
-
-    }
-}
 
 
 public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
@@ -88,7 +51,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
 
         Picasso.with(cart.getBaseContext())
                 .load(listData.get(position).getImage())
-                .resize(70,70)
+                .resize(70, 70)
                 .centerCrop()
                 .into(holder.cart_image);
         holder.btn_quantity.setNumber(listData.get(position).getQuantity());
@@ -102,7 +65,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
                 //actualizar el txt total
                 //Calcular precio total
                 float total = 0;
-                List<Order> orders = new Database(cart).getCarts();
+                List<Order> orders = new Database(cart).getCarts(Common.currentUser.getPhone());
                 for (Order item : orders) {
                     total += (Float.parseFloat(order.getPrice())) * (Float.parseFloat(item.getQuantity()));
                 }
@@ -118,12 +81,26 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
         Locale locale = new Locale("es", "EC");
         NumberFormat fmt = NumberFormat.getCurrencyInstance(locale);
         float price = (Float.parseFloat(listData.get(position).getPrice())) * (Float.parseFloat(listData.get(position).getQuantity()));
-        holder.txt_price.setText(fmt.format(price));
-        holder.txt_cart__name.setText(listData.get(position).getProductName());
+        holder.txt_cart_price.setText(fmt.format(price));
+        holder.txt_cart_name.setText(listData.get(position).getProductName());
     }
 
     @Override
     public int getItemCount() {
         return listData.size();
+    }
+
+    public Order getItem(int position) {
+        return listData.get(position);
+    }
+
+    public void removeItem(int position) {
+        listData.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void restoreItem(Order item, int position) {
+        listData.add(position, item);
+        notifyItemInserted(position);
     }
 }

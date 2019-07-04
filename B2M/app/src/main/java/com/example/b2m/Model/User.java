@@ -1,37 +1,61 @@
 package com.example.b2m.Model;
-
 public class User {
-    private String Name;
-    private String Password;
-    private String Phone;
-    private String IsStaff;
+    private String name;
+    private String password;
+    private String phone;
+    private String isStaff;
     private String secureCode;
     private String homeAddress;
+    private Object balance;
 
     public User() {
     }
 
-    public User(String name, String password, String secureCode) {
-        Name = name;
-        Password = password;
-        IsStaff = "false";
+    public User(String name, String pass, String secureCode) {
+        this.name = name;
+        this.password = pass;
+        this.isStaff = "false";
         this.secureCode = secureCode;
     }
 
-    public String getPassword() {
-        return Password;
+    public Object getBalance() {
+        return balance;
     }
 
-    public void setPassword(String password) {
-        Password = password;
+    public void setBalance(Object balance) {
+        this.balance = balance;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String pass) {
+        this.password = pass;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getIsStaff() {
-        return IsStaff;
+        return isStaff;
     }
 
     public void setIsStaff(String isStaff) {
-        IsStaff = isStaff;
+        this.isStaff = isStaff;
     }
 
     public String getSecureCode() {
@@ -41,23 +65,6 @@ public class User {
     public void setSecureCode(String secureCode) {
         this.secureCode = secureCode;
     }
-
-    public String getPhone() {
-        return Phone;
-    }
-
-    public void setPhone(String phone) {
-        Phone = phone;
-    }
-
-    public String getName() {
-        return Name;
-    }
-
-    public void setName(String name) {
-        Name = name;
-    }
-
 
     public String getHomeAddress() {
         return homeAddress;

@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.b2m.Common.Common;
 import com.example.b2m.Database.Database;
 import com.example.b2m.Interface.ItemClickListener;
+import com.example.b2m.Model.Favorites;
 import com.example.b2m.Model.Food;
 import com.example.b2m.Model.Order;
 import com.example.b2m.ViewHolder.FoodViewHolder;
@@ -148,7 +149,7 @@ public class FoodList extends AppCompatActivity {
                     categoryId = getIntent().getStringExtra("CategoryId");
 
                 if (!categoryId.isEmpty() && categoryId != null) {
-                    if (Common.isConectedToInternet(getBaseContext()))
+                    if (Common.isConnectedToInternet(getBaseContext()))
                         loadListFood(categoryId);
                     else {
                         Toast.makeText(FoodList.this, "Por favor, revisa tu conexión!!!", Toast.LENGTH_SHORT).show();
@@ -166,7 +167,7 @@ public class FoodList extends AppCompatActivity {
                     categoryId = getIntent().getStringExtra("CategoryId");
 
                 if (!categoryId.isEmpty() && categoryId != null) {
-                    if (Common.isConectedToInternet(getBaseContext()))
+                    if (Common.isConnectedToInternet(getBaseContext()))
                         loadListFood(categoryId);
                     else {
                         Toast.makeText(FoodList.this, "Por favor, revisa tu conexión!!!", Toast.LENGTH_SHORT).show();
@@ -312,22 +313,34 @@ public class FoodList extends AppCompatActivity {
                 Picasso.with(getBaseContext()).load(model.getImage())
                         .into(viewHolder.food_image);
                 //compra rapida
+
                 viewHolder.quick_cart.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new Database(getBaseContext()).addToCart(new Order(
-                                adapter.getRef(position).getKey(),
-                                model.getName(),
-                                "1",
-                                model.getPrice(),
-                                model.getDiscount(),
-                                model.getImage()
-                        ));
+                        boolean isExists = new Database(getBaseContext()).checkFoodExists(adapter.getRef(position).getKey(), Common.currentUser.getPhone());
+                        if (!isExists) {
+                            new Database(getBaseContext()).addToCart(new Order(
+                                    Common.currentUser.getPhone(),
+                                    adapter.getRef(position).getKey(),
+                                    model.getName(),
+                                    "1",
+                                    model.getPrice(),
+                                    model.getDiscount(),
+                                    model.getImage()
+                            ));
+                        } else {
+
+                            new Database(getBaseContext()).increaseCart(Common.currentUser.getPhone(), adapter.getRef(position).getKey());
+                        }
                         Toast.makeText(FoodList.this, "Agregado al carrito", Toast.LENGTH_SHORT).show();
+
                     }
                 });
+
                 //aniadir a favoritos
-                if (localDB.isFavorite(adapter.getRef(position).getKey())) {
+                if (localDB.isFavorite(adapter.getRef(position).
+
+                        getKey(), Common.currentUser.getPhone())) {
                     viewHolder.fav_image.setImageResource(R.drawable.ic_favorite_black_24dp);
                 }
                 //click para compartir en facebook
@@ -343,27 +356,38 @@ public class FoodList extends AppCompatActivity {
                 viewHolder.fav_image.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (!localDB.isFavorite(adapter.getRef(position).getKey())) {
-                            localDB.addToFavorites(adapter.getRef(position).getKey());
+                        Favorites favorites = new Favorites();
+                        favorites.setFoodId(adapter.getRef(position).getKey());
+                        favorites.setFoodName(model.getName());
+                        favorites.setFoodDescription(model.getDescription());
+                        favorites.setFoodDiscount(model.getDiscount());
+                        favorites.setFoodImage(model.getImage());
+                        favorites.setFoodMenuId(model.getMenuId());
+                        favorites.setUserPhone(Common.currentUser.getPhone());
+                        favorites.setFoodPrice(model.getPrice());
+                        if (!localDB.isFavorite(adapter.getRef(position).getKey(), Common.currentUser.getPhone())) {
+                            localDB.addToFavorites(favorites);
                             viewHolder.fav_image.setImageResource(R.drawable.ic_favorite_black_24dp);
                             Toast.makeText(FoodList.this, "" + model.getName() + "se agregó a favoritos", Toast.LENGTH_SHORT).show();
                         } else {
-                            localDB.removeFromFavorites(adapter.getRef(position).getKey());
+                            localDB.removeFromFavorites(adapter.getRef(position).getKey(), Common.currentUser.getPhone());
                             viewHolder.fav_image.setImageResource(R.drawable.ic_favorite_border_black_24dp);
                             Toast.makeText(FoodList.this, "" + model.getName() + "se eliminó de favoritos", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
                 final Food local = model;
-                viewHolder.setItemClickListener(new ItemClickListener() {
-                    @Override
-                    public void onClick(View view, int position, boolean isLongClick) {
-                        //iniciar nuevo activity
-                        Intent foodDetail = new Intent(FoodList.this, FoodDetail.class);
-                        foodDetail.putExtra("FoodId", adapter.getRef(position).getKey());//enviar el id del producto al nuevo activity
-                        startActivity(foodDetail);
-                    }
-                });
+                viewHolder.setItemClickListener(new
+
+                                                        ItemClickListener() {
+                                                            @Override
+                                                            public void onClick(View view, int position, boolean isLongClick) {
+                                                                //iniciar nuevo activity
+                                                                Intent foodDetail = new Intent(FoodList.this, FoodDetail.class);
+                                                                foodDetail.putExtra("FoodId", adapter.getRef(position).getKey());//enviar el id del producto al nuevo activity
+                                                                startActivity(foodDetail);
+                                                            }
+                                                        });
             }
 
             @Override
@@ -372,7 +396,9 @@ public class FoodList extends AppCompatActivity {
                         .inflate(R.layout.food_item, parent, false);
                 return new FoodViewHolder(itemView);
             }
-        };
+        }
+
+        ;
         adapter.startListening();
         recyclerView.setAdapter(adapter);
         swipeRefreshLayout.setRefreshing(false);
