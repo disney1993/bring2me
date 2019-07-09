@@ -162,7 +162,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         alertDialog.setIcon(R.drawable.ic_shopping_cart_black_24dp);
 
         //configurar boton
-        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
@@ -175,7 +175,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                 }
             }
         });
-        alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
@@ -325,17 +325,17 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             Intent orders = new Intent(Home.this, OrderStatus.class);
             startActivity(orders);
         }
-       /* if (id == R.id.nav_banner) {
-            Intent orders = new Intent(Home.this, OrderStatus.class);
-            startActivity(banner);
-        }*/
+       if (id == R.id.nav_menu) {
+            Intent menu = new Intent(Home.this, Home.class);
+            startActivity(menu);
+        }
         else if (id == R.id.nav_banner) {
             Intent banner = new Intent(Home.this, BannerActivity.class);
             startActivity(banner);
         }
         else if (id == R.id.nav_message) {
-            Intent banner = new Intent(Home.this, SendMessage.class);
-            startActivity(banner);
+            Intent message = new Intent(Home.this, SendMessage.class);
+            startActivity(message);
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -409,7 +409,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         alertDialog.setIcon(R.drawable.ic_shopping_cart_black_24dp);
 
         //configurar boton
-        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
@@ -418,7 +418,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                 categories.child(key).setValue(item);
             }
         });
-        alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();

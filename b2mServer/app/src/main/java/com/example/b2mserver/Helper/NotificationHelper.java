@@ -1,6 +1,5 @@
 package com.example.b2mserver.Helper;
 
-
 import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -13,51 +12,57 @@ import android.os.Build;
 
 import com.example.b2mserver.R;
 
-public class NotificationHelper extends ContextWrapper {
+    public class NotificationHelper extends ContextWrapper {
+        private static final String B2M_CHANNEL_ID = "com.example.b2mserver.bring2me";
+        private static final String B2M_CHANNEL_NAME = "BRING2ME";
 
-    private static final String B2M_CHANNEL_ID = "com.example.b2mserver.bring2me";
-    private static final String B2M_CHANNEL_NAME = "BRING2ME";
+        private NotificationManager manager;
 
-    private NotificationManager manager;
+        public NotificationHelper(Context base) {
+            super(base);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) // Only working this function if Api is 26 or higher
+                createChanel();
+        }
 
+        @TargetApi(Build.VERSION_CODES.O)
+        private void createChanel() {
+            NotificationChannel edtChannel = new NotificationChannel(
+                    B2M_CHANNEL_ID,
+                    B2M_CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            edtChannel.enableLights(false);
+            edtChannel.enableVibration(true);
+            edtChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
 
-    public NotificationHelper(Context base) {
-        super(base);
-        if (Build.VERSION.SDK_INT >=Build.VERSION_CODES.O)//esta funcion finciona para android superior a oreo
-            createChannel();
+            getManager().createNotificationChannel(edtChannel);
+        }
+
+        public NotificationManager getManager() {
+            if (manager == null)
+                manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            return manager;
+        }
+
+        @TargetApi(Build.VERSION_CODES.O)
+        public Notification.Builder edtEatItChannelNotification(String title, String body, PendingIntent contentIntent, Uri soundUri) {
+            return new Notification.Builder(getApplicationContext(), B2M_CHANNEL_ID)
+                    .setContentIntent(contentIntent)
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSound(soundUri)
+                    .setAutoCancel(false);
+        }
+
+        @TargetApi(Build.VERSION_CODES.O)
+        public Notification.Builder edtEatItChannelNotification(String title, String body, Uri soundUri) {
+            return new Notification.Builder(getApplicationContext(), B2M_CHANNEL_ID)
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSound(soundUri)
+                    .setAutoCancel(false);
+        }
+
     }
-
-    @TargetApi(Build.VERSION_CODES.O)
-    private void createChannel() {
-        NotificationChannel b2mChannel = new NotificationChannel(B2M_CHANNEL_ID,
-                B2M_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT);
-        b2mChannel.enableLights(true);
-        b2mChannel.enableVibration(true);
-        b2mChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-
-        getManager().createNotificationChannel(b2mChannel);
-    }
-
-    public NotificationManager getManager() {
-        if (manager==null)
-            manager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        return manager;
-    }
-
-    @TargetApi(Build.VERSION_CODES.O)
-    public android.app.Notification.Builder getB2MChannelNotification(String title,
-                                                                      String body,
-                                                                      PendingIntent contentIntent,
-                                                                      Uri soundUri)
-    {
-        return new android.app.Notification.Builder(getApplicationContext(),B2M_CHANNEL_ID)
-                .setContentIntent(contentIntent)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setSound(soundUri)
-                .setAutoCancel(false);
-    }
-
-}

@@ -12,77 +12,98 @@ import android.support.v4.app.NotificationCompat;
 
 import com.example.b2mserver.Common.Common;
 import com.example.b2mserver.Helper.NotificationHelper;
-import com.example.b2mserver.MainActivity;
-import com.example.b2mserver.Model.Token;
 import com.example.b2mserver.OrderStatus;
 import com.example.b2mserver.R;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Map;
 import java.util.Random;
 
 public class MyFirebaseMessaging extends FirebaseMessagingService {
 
     @Override
-    public void onNewToken(String token) {
-        super.onNewToken(token);
-        updateToServer(token);
-    }
-
-    private void updateToServer(String refreshedToken) {
-        if (Common.currentUser != null) {
-            FirebaseDatabase db = FirebaseDatabase.getInstance();
-            DatabaseReference tokens = db.getReference("Tokens");
-            Token data = new Token(refreshedToken, true);
-            tokens.child(Common.currentUser.getPhone()).setValue(data);
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        super.onMessageReceived(remoteMessage);
+        if (remoteMessage.getData() != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                sendNotificationAPI26(remoteMessage);
+            else
+                sendNotification(remoteMessage);
         }
     }
 
-    @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
-        super.onMessageReceived(remoteMessage);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)//esta funcion finciona para android superior a oreo
-            sendNotificationAPI26(remoteMessage);
-        else
-            sendNotification(remoteMessage);
-    }
-
     private void sendNotificationAPI26(RemoteMessage remoteMessage) {
-        RemoteMessage.Notification notification = remoteMessage.getNotification();
-        String title = notification.getTitle();
-        String content = notification.getBody();
+//        RemoteMessage.Notification notification = remoteMessage.getNotification();
+//        String title = notification != null ? notification.getTitle() : null;
+//        String content = notification != null ? notification.getBody() : null;
 
-        //para ir al listado de pedidos desde la notiicacion
-        Intent intent = new Intent(this, OrderStatus.class);
-        intent.putExtra(Common.PHONE_TEXT, Common.currentUser.getPhone());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationHelper helper= new NotificationHelper(this);
-        Notification.Builder builder = helper.getB2MChannelNotification(title,content,pendingIntent,defaultSoundUri);
-        //generamos un id random para las notificaciones y poder ver todas
-        helper.getManager().notify(new Random().nextInt(),builder.build());
+        Map<String, String> data = remoteMessage.getData();
+        String title = data.get("title");
+        String message = data.get("message");
+
+        // Go to Order List
+        PendingIntent pendingIntent;
+        NotificationHelper notificationHelper;
+        Notification.Builder builder;
+
+        if (Common.currentUser != null) {
+            Intent intent = new Intent(this, OrderStatus.class);
+            intent.putExtra(Common.PHONE_TEXT, Common.currentUser.getPhone());
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+            notificationHelper = new NotificationHelper(this);
+            builder = notificationHelper.edtEatItChannelNotification(title, message, pendingIntent, defaultSoundUri);
+
+            // Get random Id for notification to show all notification
+            notificationHelper.getManager().notify(new Random().nextInt(), builder.build());
+        } else { // 만약 유저의 정보가 'Null'일 경우
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+            notificationHelper = new NotificationHelper(this);
+            builder = notificationHelper.edtEatItChannelNotification(title, message, defaultSoundUri);
+
+            // Get random Id for notification to show all notification
+            notificationHelper.getManager().notify(new Random().nextInt(), builder.build());
+        }
+
     }
 
     private void sendNotification(RemoteMessage remoteMessage) {
-        RemoteMessage.Notification notification = remoteMessage.getNotification();
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        Map<String, String> data = remoteMessage.getData();
+        String title = data.get("title");
+        String message = data.get("message");
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setContentTitle(notification.getTitle())
-                .setContentText(notification.getBody())
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+        if (Common.currentUser != null) {
+            Intent intent = new Intent(this, OrderStatus.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
-        NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        noti.notify(0, builder.build());
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setAutoCancel(true)
+                    .setSound(defaultSoundUri)
+                    .setContentIntent(pendingIntent);
+
+            NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            noti.notify(0, builder.build());
+
+        } else {
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.ic_local_shipping_black_24dp)
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setAutoCancel(true)
+                    .setSound(defaultSoundUri);
+
+            NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            noti.notify(0, builder.build());
+        }
     }
 }

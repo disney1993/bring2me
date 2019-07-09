@@ -1,45 +1,49 @@
 package com.example.b2mserver.Model;
 
-public class User {
-    private String Name, Password, Phone, IsStaff;
 
-    public User(String name, String password) {
-        Name = name;
-        Password = password;
-    }
+public class User {
+    private String name;
+    private String password;
+    private String phone;
+    private String isStaff;
 
     public User() {
     }
 
+    public User(String name, String password) {
+        this.name = name;
+        this.password = password;
+    }
+
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
     }
 
     public String getPhone() {
-        return Phone;
+        return phone;
     }
 
     public void setPhone(String phone) {
-        Phone = phone;
+        this.phone = phone;
     }
 
     public String getIsStaff() {
-        return IsStaff;
+        return isStaff;
     }
 
     public void setIsStaff(String isStaff) {
-        IsStaff = isStaff;
+        this.isStaff = isStaff;
     }
 }

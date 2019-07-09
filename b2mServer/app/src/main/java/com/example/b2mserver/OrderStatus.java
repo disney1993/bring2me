@@ -15,11 +15,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.b2mserver.Common.Common;
-import com.example.b2mserver.Model.Category;
+import com.example.b2mserver.Model.DataMessage;
 import com.example.b2mserver.Model.MyResponse;
-import com.example.b2mserver.Model.Notification;
 import com.example.b2mserver.Model.Request;
-import com.example.b2mserver.Model.Sender;
 import com.example.b2mserver.Model.Token;
 import com.example.b2mserver.Remote.APIService;
 import com.example.b2mserver.ViewHolder.OrderViewHolder;
@@ -30,13 +28,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.jaredrummler.materialspinner.MaterialSpinner;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class OrderStatus extends AppCompatActivity {
+    private FirebaseDatabase database;
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
@@ -58,7 +61,7 @@ public class OrderStatus extends AppCompatActivity {
         db = FirebaseDatabase.getInstance();
         requests = db.getReference("Requests");
         //inicializamos el servicio
-        mService = Common.getFCMClient();
+        mService = Common.getFCMService();
 
         //Inicializar
         recyclerView = (RecyclerView) findViewById(R.id.listOrders);
@@ -80,9 +83,10 @@ public class OrderStatus extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull OrderViewHolder viewHolder, final int position, @NonNull final Request model) {
                 viewHolder.txtOrderId.setText(adapter.getRef(position).getKey());
-                viewHolder.txtOrderStatus.setText(Common.covertirCodigoAStatus(model.getStatus()));
+                viewHolder.txtOrderStatus.setText(Common.convertCodeToStatus(model.getStatus()));
                 viewHolder.txtOrderAddress.setText(model.getAddress());
                 viewHolder.txtOrderPhone.setText(model.getPhone());
+                viewHolder.txtOrderDate.setText(Common.getDate(Long.parseLong(adapter.getRef(position).getKey())));
 
                 //evetnos de los botones
                 viewHolder.btnEdit.setOnClickListener(new View.OnClickListener() {
@@ -156,7 +160,7 @@ public class OrderStatus extends AppCompatActivity {
         alertDialog.setView(view);
 
         final String localKey = key;
-        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 dialog.dismiss();
@@ -167,7 +171,7 @@ public class OrderStatus extends AppCompatActivity {
                 sendOrderStatusToUser(localKey, item);
             }
         });
-        alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 dialog.dismiss();
@@ -177,24 +181,31 @@ public class OrderStatus extends AppCompatActivity {
     }
 
     private void sendOrderStatusToUser(final String key, final Request item) {
-        DatabaseReference tokens = db.getReference("Tokens");
-        tokens.orderByKey().equalTo(item.getPhone())
+        DatabaseReference tokens = database.getReference("Tokens");
+        tokens.child(item.getPhone())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                            Token token = postSnapshot.getValue(Token.class);
+                        if (dataSnapshot.exists()) {
+                            Token token = dataSnapshot.getValue(Token.class);
 
-                            Notification notification = new Notification("Bring2Me", "Tu pedido " + key + " fue actualizado");
-                            Sender content = new Sender(token.getToken(), notification);
-                            mService.sendNotification(content)
+                            Map<String, String> dataSend = new HashMap<>();
+                            dataSend.put("title", "B2M");
+                            dataSend.put("message", "Nuevo pedido (" + key + ") recibido!");
+                            DataMessage dataMessage = new DataMessage(token != null ? token.getToken() : null, dataSend);
+
+                            String test = new Gson().toJson(dataMessage);
+                            Log.d("Content", test);
+
+                            mService.sendNotification(dataMessage)
                                     .enqueue(new Callback<MyResponse>() {
                                         @Override
                                         public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
                                             if (response.body().success == 1) {
-                                                Toast.makeText(OrderStatus.this, "Pedido actualizado!", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(OrderStatus.this, "Pedido actualizado", Toast.LENGTH_SHORT).show();
+
                                             } else {
-                                                Toast.makeText(OrderStatus.this, "Pedido actualizado pero falló la notificacion!", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(OrderStatus.this, "Pedido actualizado pero fallo la notificacion!", Toast.LENGTH_SHORT).show();
                                             }
                                         }
 
@@ -203,6 +214,7 @@ public class OrderStatus extends AppCompatActivity {
                                             Log.e("ERROR", t.getMessage());
                                         }
                                     });
+
                         }
                     }
 
@@ -213,4 +225,14 @@ public class OrderStatus extends AppCompatActivity {
                 });
 
     }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Fix click back on FoodDetail and get no item in FoodList
+        if (adapter != null)
+            adapter.startListening();
+    }
+
 }

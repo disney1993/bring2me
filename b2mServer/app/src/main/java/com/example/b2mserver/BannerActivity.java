@@ -161,7 +161,7 @@ public class BannerActivity extends AppCompatActivity {
         alertDialog.setIcon(R.drawable.ic_laptop_chromebook_black_24dp);
 
         //configurar boton para dialog
-        alertDialog.setPositiveButton("Crear", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton("Agregar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
                 dialogInterface.dismiss();

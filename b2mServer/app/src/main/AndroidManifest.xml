@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.b2mserver">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -7,17 +8,19 @@
          location permissions for the 'MyLocation' functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".SendMessage"></activity>
+        android:theme="@style/AppTheme"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity android:name=".ShipperManagementActivity"></activity>
+        <activity android:name=".SendMessage" />
         <activity android:name=".BannerActivity" />
         <activity android:name=".OrderDetail" />
 
@@ -44,18 +47,12 @@
         </activity> <!-- servicios para las notificaciones -->
         <service
             android:name=".Service.MyFirebaseMessaging"
-            android:stopWithTask="false">
+            android:stopWithTask="false"
+            tools:ignore="ExportedService,InnerclassSeparator">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service
-            android:name=".Service.MyFirebaseMessaging"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>AndroidManifest.xml
     </application>
 
 </manifest>

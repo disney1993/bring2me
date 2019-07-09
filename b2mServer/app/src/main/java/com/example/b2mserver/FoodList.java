@@ -133,7 +133,7 @@ public class FoodList extends AppCompatActivity {
         alertDialog.setIcon(R.drawable.ic_shopping_cart_black_24dp);
 
         //configurar boton
-        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton("Agregar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
@@ -146,7 +146,7 @@ public class FoodList extends AppCompatActivity {
                 }
             }
         });
-        alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
@@ -315,7 +315,7 @@ public class FoodList extends AppCompatActivity {
         alertDialog.setIcon(R.drawable.ic_shopping_cart_black_24dp);
 
         //configurar boton
-        alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton("Editar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
@@ -331,7 +331,7 @@ public class FoodList extends AppCompatActivity {
                         .show();
             }
         });
-        alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();

@@ -37,6 +37,16 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/order_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center_vertical|start"
+                    android:text="Fecha pedido"
+                    android:textAllCaps="true"
+                    android:textStyle="italic"/>
+
+                <TextView
                     android:id="@+id/order_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

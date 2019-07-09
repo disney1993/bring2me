@@ -3,7 +3,6 @@ package com.example.b2mserver.Remote;
 
 import com.example.b2mserver.Model.DataMessage;
 import com.example.b2mserver.Model.MyResponse;
-import com.example.b2mserver.Model.Sender;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -21,7 +20,5 @@ public interface APIService {
     @POST("fcm/send")
     retrofit2.Call<MyResponse> sendNotification(@Body DataMessage body);
 
-    @POST("fcm/send")
-    Call<MyResponse> sendNotification(@Body Sender body);
 }
 

@@ -1,15 +1,16 @@
 package com.example.b2mserver.Model;
 
+
 public class Token {
-        public String token;
-        public Boolean isServerToken;
+    public String token;
+    public boolean serverToken;
 
     public Token() {
     }
 
-    public Token(String token, Boolean isServerToken) {
+    public Token(String token, boolean serverToken) {
         this.token = token;
-        this.isServerToken = isServerToken;
+        this.serverToken = serverToken;
     }
 
     public String getToken() {
@@ -17,14 +18,14 @@ public class Token {
     }
 
     public void setToken(String token) {
-        token = token;
+        this.token = token;
     }
 
-    public Boolean getServerToken() {
-        return isServerToken;
+    public boolean isServerToken() {
+        return serverToken;
     }
 
-    public void setServerToken(Boolean serverToken) {
-        isServerToken = serverToken;
+    public void setServerToken(boolean serverToken) {
+        this.serverToken = serverToken;
     }
 }

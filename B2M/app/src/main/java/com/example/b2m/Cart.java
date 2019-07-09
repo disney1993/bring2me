@@ -327,11 +327,13 @@ public class Cart extends AppCompatActivity implements LocationListener, Recycle
 
         //radios
         final RadioButton rdiShipToAddress = order_address_comment.findViewById(R.id.rdiShipToAddress);
+        rdiShipToAddress.setVisibility(View.INVISIBLE);
         final RadioButton rdiHomeAddress = order_address_comment.findViewById(R.id.rdiHomeAddress);
 
         final RadioButton rdiCOD = order_address_comment.findViewById(R.id.rdiCOD);
         final RadioButton rdiPaypal = order_address_comment.findViewById(R.id.rdiPaypal);
         final RadioButton rdiBalance = order_address_comment.findViewById(R.id.rdiBring2MeBalance);
+        rdiBalance.setVisibility(View.INVISIBLE);
 
         //eventos radios
 
@@ -822,12 +824,12 @@ public class Cart extends AppCompatActivity implements LocationListener, Recycle
                 public void onClick(View v) {
                     adapter.restoreItem(deleteItem, deleteIndex);
                     new Database(getBaseContext()).addToCart(deleteItem);
-                    //Update txtTotal
-                    //Calculate total price
+
+                    //Calcular precio total
                     float total = 0;
                     List<Order> orders = new Database(getBaseContext()).getCarts(Common.currentUser.getPhone());
                     for (Order item : orders)
-                        total += (Integer.parseInt(item.getPrice())) * (Integer.parseInt(item.getQuantity()));
+                        total += (Float.parseFloat(item.getPrice())) * (Float.parseFloat(item.getQuantity()));
 
                     Locale locale = new Locale("es", "EC");
                     NumberFormat fmt = NumberFormat.getCurrencyInstance(locale);

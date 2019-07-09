@@ -12,7 +12,7 @@ import com.example.b2mserver.R;
 
 public class OrderViewHolder extends RecyclerView.ViewHolder {
 
-    public TextView txtOrderId, txtOrderStatus, txtOrderPhone, txtOrderAddress;
+    public TextView txtOrderId, txtOrderStatus, txtOrderPhone, txtOrderAddress,txtOrderDate;
 
     //botones de opciones
     public Button btnEdit,btnRemove,btnDetail,btnDirection;
@@ -24,6 +24,7 @@ public class OrderViewHolder extends RecyclerView.ViewHolder {
         txtOrderStatus = (TextView) itemView.findViewById(R.id.order_status);
         txtOrderPhone = (TextView) itemView.findViewById(R.id.order_phone);
         txtOrderAddress = (TextView) itemView.findViewById(R.id.order_ship_to);
+        txtOrderDate = (TextView) itemView.findViewById(R.id.order_date);
 
         //botones
         btnEdit = (Button) itemView.findViewById(R.id.btnEdit);
